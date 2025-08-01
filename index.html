@@ -5,54 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WPTOPUP 💎</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin:0;
-        background: linear-gradient(to bottom, #0d1b2a, #000);
-        color:#fff;
-    }
-    header {
-        background:#0a192f;
-        padding:15px;
-        font-size:1.5rem;
-        font-weight:bold;
-        position:relative;
-        text-align:center;
-        color:gold;
-    }
-    .back-btn {
-        position:absolute; left:10px; top:10px;
-        background:gold; color:#000; border:none;
-        padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;
-    }
+    body {font-family: Arial, sans-serif;margin:0;background: linear-gradient(to bottom, #0d1b2a, #000);color:#fff;}
+    header {background:#0a192f;padding:15px;font-size:1.5rem;font-weight:bold;position:relative;text-align:center;color:gold;}
+    .back-btn {position:absolute; left:10px; top:10px;background:gold; color:#000; border:none;padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;}
     .container {max-width:900px; margin:auto; padding:20px; text-align:center;}
     .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px;}
-    .card, .item, button {
-        background:#1e293b;
-        padding:10px;
-        border-radius:8px;
-        border:2px solid gold;
-        cursor:pointer;
-        font-weight:bold;
-        transition:0.3s;
-        color:white;
-    }
+    .card, .item, button {background:#1e293b;padding:10px;border-radius:8px;border:2px solid gold;cursor:pointer;font-weight:bold;transition:0.3s;color:white;}
     .card:hover, .item:hover, button:hover {background:#334155;}
-    .item small {display:block; font-weight:normal; color:#ccc; margin-top:4px;}
-    label {display:block; text-align:left; margin:10px 0 5px; font-weight:bold; color:gold;}
-    input {
-        width:95%; padding:10px; margin-bottom:10px; border:1px solid #555;
-        border-radius:6px; background:#0f172a; color:white;
-    }
-    pre {text-align:left; background:#1e293b; padding:10px; border-radius:6px; color:white;}
+    .item small {display:block;font-weight:normal;color:#ccc;margin-top:4px;}
+    label {display:block;text-align:left;margin:10px 0 5px;font-weight:bold;color:gold;}
+    input {width:95%; padding:10px; margin-bottom:10px; border:1px solid #555;border-radius:6px;background:#0f172a;color:white;}
+    pre {text-align:left;background:#1e293b;padding:10px;border-radius:6px;color:white;}
     .hidden {display:none;}
-    .cs-button {
-        position: fixed; bottom: 20px; left: 20px; background: gold; color: black;
-        padding: 12px 18px; border-radius: 50px; font-weight: bold; text-decoration: none;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: 0.3s;
-    }
+    .cs-button {position: fixed; bottom: 20px; left: 20px; background: gold; color: black;padding: 12px 18px; border-radius: 50px; font-weight: bold; text-decoration: none;box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: 0.3s;}
     .cs-button:hover {background: #d4af37; transform: scale(1.05);}
-    footer {background:#0a192f; color:gold; text-align:center; padding:10px; margin-top:20px;}
+    footer {background:#0a192f;color:gold;text-align:center;padding:10px;margin-top:20px;}
 </style>
 </head>
 <body>
@@ -100,6 +67,7 @@
 let selectedGame = "", selectedNominal = "", selectedPrice = "", userID = "", serverID = "", selectedPayment = "";
 let currentStep = 1;
 
+// daftar game populer
 const games = [
     {name:"Free Fire", server:false},
     {name:"Mobile Legends", server:true},
@@ -118,7 +86,7 @@ const games = [
     {name:"Minecraft", server:false}
 ];
 
-// Harga & nominal lengkap
+// harga & nominal
 const nominalData = {
     "Free Fire": [
         {nominal:"70 Diamonds", price:"Rp 10.000"},
@@ -163,6 +131,14 @@ const nominalData = {
         {nominal:"1000 VP", price:"Rp 105.000"},
         {nominal:"2050 VP", price:"Rp 210.000"},
         {nominal:"5350 VP", price:"Rp 530.000"}
+    ],
+    "Genshin Impact": [
+        {nominal:"60 Genesis Crystals", price:"Rp 15.000"},
+        {nominal:"300+30 Genesis Crystals", price:"Rp 75.000"},
+        {nominal:"980+110 Genesis Crystals", price:"Rp 230.000"},
+        {nominal:"1980+260 Genesis Crystals", price:"Rp 450.000"},
+        {nominal:"3280+600 Genesis Crystals", price:"Rp 750.000"},
+        {nominal:"6480+1600 Genesis Crystals", price:"Rp 1.450.000"}
     ]
 };
 
