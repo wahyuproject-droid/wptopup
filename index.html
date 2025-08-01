@@ -5,76 +5,294 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WPTOPUP 💎</title>
 <style>
-    body {font-family: Arial, sans-serif;margin:0;background: linear-gradient(to bottom, #0d1b2a, #000);color:#fff;}
-    header {background:#0a192f;padding:15px;font-size:1.5rem;font-weight:bold;position:relative;text-align:center;color:gold;}
-    .back-btn {position:absolute; left:10px; top:10px;background:gold; color:#000; border:none;padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;}
-    .container {max-width:900px; margin:auto; padding:20px; text-align:center;}
-    .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px;}
-    .card, .item, button {background:#1e293b;padding:10px;border-radius:8px;border:2px solid gold;cursor:pointer;font-weight:bold;transition:0.3s;color:white;}
-    .card:hover, .item:hover, button:hover {background:#334155;}
-    .item small {display:block;font-weight:normal;color:#ccc;margin-top:4px;}
-    label {display:block;text-align:left;margin:10px 0 5px;font-weight:bold;color:gold;}
-    input {width:95%; padding:10px; margin-bottom:10px; border:1px solid #555;border-radius:6px;background:#0f172a;color:white;}
-    pre {text-align:left;background:#1e293b;padding:10px;border-radius:6px;color:white;}
-    .hidden {display:none;}
-    .cs-button {position: fixed; bottom: 20px; left: 20px; background: gold; color: black;padding: 12px 18px; border-radius: 50px; font-weight: bold; text-decoration: none;box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: 0.3s;}
-    .cs-button:hover {background: #d4af37; transform: scale(1.05);}
-    footer {background:#0a192f;color:gold;text-align:center;padding:10px;margin-top:20px;}
+body {font-family: Arial, sans-serif;margin:0;background:#0d0d0d;color:#fff;}
+header {
+    background: linear-gradient(90deg, #b8860b, #ffd700);
+    padding:15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:black;
+    font-weight:bold;
+    box-shadow: 0 2px 10px rgba(255,215,0,0.5);
+}
+header button {background:none;border:none;color:black;font-size:1.5rem;cursor:pointer;}
+.container {max-width:900px;margin:auto;padding:20px;}
+label {display:block;margin-bottom:5px;font-weight:bold;color:gold;}
+input {
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:5px;
+    background:#2a2a2a;
+    color:white;
+    box-shadow: inset 0 0 5px rgba(255,215,0,0.5);
+}
+button {
+    background: linear-gradient(90deg, #ffd700, #b8860b);
+    color:black;
+    border:none;
+    padding:10px 15px;
+    font-weight:bold;
+    border-radius:5px;
+    cursor:pointer;
+    box-shadow: 0 0 10px rgba(255,215,0,0.6);
+    transition: 0.3s;
+}
+button:hover {transform: scale(1.05); box-shadow: 0 0 15px rgba(255,215,0,1);}
+.grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;}
+.card {
+    background:#1e1e1e;
+    border-radius:8px;
+    padding:15px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+    border:2px solid transparent;
+    box-shadow: 0 0 5px rgba(255,215,0,0.3);
+}
+.card:hover {
+    border:2px solid gold;
+    box-shadow: 0 0 15px rgba(255,215,0,0.8);
+    transform: translateY(-3px);
+}
+.sidebar {
+    position:fixed;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:#1a1a1a;
+    padding:20px;
+    transition:0.4s ease;
+    z-index:1000;
+    box-shadow: 2px 0 10px rgba(255,215,0,0.4);
+}
+.sidebar a {display:block;color:white;text-decoration:none;margin:15px 0;transition:0.3s;}
+.sidebar a:hover {color:gold;transform:translateX(5px);}
+.sidebar.open {left:0;}
+.back-btn {background:none;border:none;color:gold;font-size:1rem;cursor:pointer;margin-bottom:10px;}
+pre {
+    background:#1e1e1e;
+    padding:10px;
+    border-radius:6px;
+    white-space:pre-wrap;
+    box-shadow: inset 0 0 5px rgba(255,215,0,0.4);
+}
+footer {
+    text-align:center;
+    color:#aaa;
+    padding:20px;
+    font-size:0.9rem;
+    border-top: 1px solid rgba(255,215,0,0.3);
+}
 </style>
 </head>
 <body>
 
-<header id="headerTitle">WPTOPUP 💎</header>
+<header>
+    <button onclick="toggleMenu()">☰</button>
+    <div>WPTOPUP 💎</div>
+    <div id="saldoHeader">Rp 0</div>
+</header>
 
-<div class="container" id="step1">
-    <h2>Pilih Game</h2>
-    <div class="grid" id="gameList"></div>
+<div class="sidebar" id="sidebar">
+    <button class="back-btn" onclick="toggleMenu()">⬅ Kembali</button>
+    <a href="#" onclick="showLogin()">🔑 Login</a>
+    <a href="#" onclick="showRegister()">📝 Daftar</a>
+    <a href="#" onclick="showSaldo()">💰 Saldo: <span id="saldoMenu">0</span></a>
+    <a href="#" onclick="topUpSaldo()">➕ Top Up Saldo</a>
 </div>
 
-<div class="container hidden" id="step2">
-    <h2 id="gameTitle"></h2>
-    <label for="userID">Masukkan ID / Username</label>
-    <input type="text" id="userID" placeholder="Contoh: 123456789">
-    <div id="serverField" class="hidden">
-        <label for="serverID">Server</label>
-        <input type="text" id="serverID" placeholder="Contoh: 1234">
-    </div>
-    <button onclick="cekID()">✅ Cek ID & Lanjut</button>
+<div class="container" id="mainContent">
+    <h2>Selamat Datang di WPTOPUP 💎</h2>
+    <p>Silakan login untuk mulai top up game, voucher, dan pulsa.</p>
+    <button onclick="showLogin()">🔑 Login Sekarang</button>
 </div>
 
-<div class="container hidden" id="step3">
-    <h2>Pilih Nominal</h2>
-    <div class="grid" id="nominalList"></div>
-</div>
-
-<div class="container hidden" id="step4">
-    <h2>Pilih Pembayaran</h2>
-    <div class="grid" id="paymentList"></div>
-</div>
-
-<div class="container hidden" id="step5">
-    <h2>Struk Order</h2>
-    <pre id="strukText"></pre>
-    <button onclick="sendWhatsApp()">📲 Kirim ke WhatsApp</button>
-</div>
-
-<a href="https://wa.me/6285215838062?text=Halo%20Customer%20Service%20WPTOPUP" 
-   class="cs-button" target="_blank">📞 Customer Service</a>
-
-<footer>© 2025 WAHYU PROJECT</footer>
+<footer>© 2025 WPTOPUP | IB : WAHYU PROJECT</footer>
 
 <script>
-let selectedGame = "", selectedNominal = "", selectedPrice = "", userID = "", serverID = "", selectedPayment = "";
-let currentStep = 1;
+let akun = JSON.parse(localStorage.getItem('akun')) || [];
+let loginUser = JSON.parse(localStorage.getItem('loginUser')) || null;
+let saldo = JSON.parse(localStorage.getItem('saldo')) || 0;
 
-// daftar game populer
-const games = [
-    {name:"Free Fire", server:false},
-    {name:"Mobile Legends", server:true},
-    {name:"PUBG Mobile", server:false},
-    {name:"Roblox", server:false},
-    {name:"Valorant", server:false},
-    {name:"Genshin Impact", server:false},
+function updateSaldo(){
+    document.getElementById("saldoHeader").innerText = "Rp " + saldo.toLocaleString();
+    document.getElementById("saldoMenu").innerText = saldo.toLocaleString();
+}
+
+function toggleMenu(){
+    document.getElementById("sidebar").classList.toggle("open");
+    updateSaldo();
+}
+
+function showLogin(){
+    document.getElementById("mainContent").innerHTML = `
+    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
+    <h2>Login</h2>
+    <label>Username</label><input id='loginUserInput'>
+    <label>Password</label><input id='loginPassInput' type='password'>
+    <button onclick='login()'>Login</button>`;
+}
+
+function showRegister(){
+    document.getElementById("mainContent").innerHTML = `
+    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
+    <h2>Daftar</h2>
+    <label>Username</label><input id='regUser'>
+    <label>Password</label><input id='regPass' type='password'>
+    <button onclick='register()'>Daftar</button>`;
+}
+
+function showSaldo(){
+    document.getElementById("mainContent").innerHTML = `
+    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
+    <h2>Saldo Anda</h2><p>Rp ${saldo.toLocaleString()}</p>`;
+}
+
+function topUpSaldo(){
+    if(!loginUser){showLogin();return;}
+    let nominalList = [10000,20000,50000,100000,150000,200000,250000,300000,400000,500000,750000,1000000];
+    let html = `<button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
+    <h2>Top Up Saldo</h2>
+    <div class='grid'>`;
+    nominalList.forEach(n=>{
+        html += `<div class='card' onclick='prosesTopUp(${n})'>Rp ${n.toLocaleString()}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function prosesTopUp(nominal){
+    let struk = `TOP UP SALDO\nUsername: ${loginUser}\nNominal: Rp ${nominal.toLocaleString()}`;
+    let phone = "6287778913867";
+    saldo += nominal;
+    localStorage.setItem('saldo', saldo);
+    updateSaldo();
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(struk)}`, "_blank");
+    showSaldo();
+}
+
+function register(){
+    let user = document.getElementById("regUser").value.trim();
+    let pass = document.getElementById("regPass").value.trim();
+    if(user && pass){
+        if(akun.find(a=>a.user===user)){
+            alert("Username sudah ada");
+            return;
+        }
+        akun.push({user,pass});
+        localStorage.setItem('akun', JSON.stringify(akun));
+        alert("Pendaftaran berhasil");
+        showLogin();
+    } else {
+        alert("Isi semua data");
+    }
+}
+
+function login(){
+    let user = document.getElementById("loginUserInput").value.trim();
+    let pass = document.getElementById("loginPassInput").value.trim();
+    let a = akun.find(a=>a.user===user && a.pass===pass);
+    if(a){
+        loginUser = user;
+        localStorage.setItem('loginUser', JSON.stringify(user));
+        alert("Login berhasil");
+        pilihGame();
+    } else {
+        alert("Username atau password salah");
+    }
+}
+
+function showMain(){
+    document.getElementById("mainContent").innerHTML = `
+        <h2>Selamat Datang di WPTOPUP 💎</h2>
+        <p>Silakan login untuk mulai top up game, voucher, dan pulsa.</p>
+        <button onclick="showLogin()">🔑 Login Sekarang</button>
+    `;
+}
+
+function pilihGame(){
+    if(!loginUser){showLogin();return;}
+    let games = [
+        "Free Fire","Mobile Legends","PUBG Mobile","Roblox","Valorant","Genshin Impact","COD Mobile",
+        "Higgs Domino","AOV","Point Blank","Honkai: Star Rail","Clash of Clans","Clash Royale",
+        "FIFA Mobile","Minecraft","Google Play Voucher","Steam Wallet","PSN Voucher","Garena Shell",
+        "Pulsa Telkomsel","Pulsa XL","Pulsa Indosat","Pulsa Axis","Pulsa Tri","Pulsa Smartfren"
+    ];
+    let html = `<button class='back-btn' onclick='showMain()'>⬅ Kembali</button><h2>Pilih Game/Voucher/Pulsa</h2><div class='grid'>`;
+    games.forEach(g=>{
+        html += `<div class='card' onclick='masukkanID("${g}")'>${g}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function masukkanID(game){
+    let html = `<button class='back-btn' onclick='pilihGame()'>⬅ Kembali</button>
+    <h2>${game}</h2>
+    <label>ID / Username / Nomor HP</label><input id='userID'>
+    <label>Server (Opsional)</label><input id='serverID'>
+    <button onclick='pilihNominal("${game}")'>Lanjut</button>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function pilihNominal(game){
+    let nominalData = {
+        "Free Fire":[["70 Diamonds",10000],["140 Diamonds",20000],["355 Diamonds",50000],["720 Diamonds",100000],["1450 Diamonds",200000]],
+        "Mobile Legends":[["86 Diamonds",20000],["172 Diamonds",40000],["257 Diamonds",60000],["514 Diamonds",120000],["1000 Diamonds",230000]],
+        "PUBG Mobile":[["60 UC",15000],["325 UC",75000],["660 UC",150000],["1800 UC",350000],["3850 UC",700000]],
+        "Roblox":[["80 Robux",15000],["400 Robux",75000],["800 Robux",150000],["1700 Robux",300000]],
+        "Valorant":[["475 VP",50000],["950 VP",100000],["1900 VP",200000],["3800 VP",400000]],
+        "Genshin Impact":[["60 Genesis",15000],["300 Genesis",75000],["980 Genesis",230000],["1980 Genesis",460000]],
+        "COD Mobile":[["80 CP",15000],["420 CP",75000],["880 CP",150000],["2400 CP",400000]],
+        "Higgs Domino":[["30M Koin",10000],["60M Koin",20000],["200M Koin",50000],["400M Koin",100000]],
+        "Pulsa Telkomsel":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]],
+        "Pulsa XL":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]],
+        "Pulsa Indosat":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]],
+        "Pulsa Axis":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]],
+        "Pulsa Tri":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]],
+        "Pulsa Smartfren":[["10.000",12000],["25.000",27000],["50.000",52000],["100.000",102000]]
+    };
+    let html = `<button class='back-btn' onclick='masukkanID("${game}")'>⬅ Kembali</button><h2>Pilih Nominal</h2><div class='grid'>`;
+    (nominalData[game]||[]).forEach(item=>{
+        html += `<div class='card' onclick='pilihPembayaran("${game}","${item[0]}",${item[1]})'>${item[0]}<br><small>Rp ${item[1].toLocaleString()}</small></div>`;
+    });
+    html += `</div>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function pilihPembayaran(game,nominal,harga){
+    let payments = ["QRIS","Dana","OVO","GoPay","ShopeePay","BCA","BRI","Mandiri"];
+    let html = `<button class='back-btn' onclick='pilihNominal("${game}")'>⬅ Kembali</button><h2>Pilih Pembayaran</h2><div class='grid'>`;
+    payments.forEach(p=>{
+        html += `<div class='card' onclick='tampilStruk("${game}","${nominal}",${harga},"${p}")'>${p}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function tampilStruk(game,nominal,harga,payment){
+    let id = document.getElementById("userID").value;
+    let server = document.getElementById("serverID").value;
+    let struk = `WPTOPUP 💎\nGame/Voucher: ${game}\nID/Server/No HP: ${id}${server?" ("+server+")":""}\nNominal: ${nominal}\nHarga: Rp ${harga.toLocaleString()}\nPembayaran: ${payment}\nStatus: Menunggu Konfirmasi Admin`;
+    let html = `<button class='back-btn' onclick='pilihPembayaran("${game}","${nominal}",${harga})'>⬅ Kembali</button>
+    <h2>Struk</h2><pre>${struk}</pre>
+    <button onclick='sendWhatsApp(\`${encodeURIComponent(struk)}\`)'>📲 Kirim WhatsApp</button>`;
+    document.getElementById("mainContent").innerHTML = html;
+}
+
+function sendWhatsApp(msg){
+    let phone = "6287778913867";
+    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+}
+
+updateSaldo();
+</script>
+</body>
+</html>    {name:"Genshin Impact", server:false},
     {name:"Higgs Domino", server:false},
     {name:"COD Mobile", server:false},
     {name:"Point Blank", server:false},
