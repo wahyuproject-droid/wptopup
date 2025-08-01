@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPTOPUP</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin:0;
+        background: url('image.png') no-repeat center center fixed;
+        background-size: cover;
+        color:#222;
+        position: relative;
+    }
+    /* Overlay hijau transparan */
+    body::before {
+        content: "";
+        position: fixed;
+        top:0; left:0; right:0; bottom:0;
+        background: rgba(46, 125, 50, 0.65);
+        z-index: -1;
+    }
+    header {
+        background:rgba(27, 94, 32, 0.9);
+        color:#fff; text-align:center; padding:15px;
+        font-size:1.5rem; font-weight:bold; position:relative;
+    }
+    .back-btn {
+        position:absolute; left:10px; top:10px;
+        background:#1b5e20; color:#fff; border:none;
+        padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;
+    }
+    .back-btn:hover {background:#145a14;}
+    .container {
+        max-width:900px; margin:auto; padding:20px; text-align:center;
+    }
+    .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px;}
+    .card, .item, button {
+        background:rgba(255,255,255,0.9); padding:15px; border-radius:8px; border:2px solid #2e7d32;
+        cursor:pointer; font-weight:bold; transition:0.3s;
+    }
+    .card:hover, .item:hover, button:hover {background:rgba(200, 230, 201, 0.9);}
+    input {
+        width:90%; padding:10px; margin-top:10px;
+        border:1px solid #ccc; border-radius:6px;
+    }
+    button {margin-top:15px;}
+    pre {
+        text-align:left; background:rgba(244,244,244,0.9);
+        padding:10px; border-radius:6px;
+    }
+    .hidden {display:none;}
+    .cs-button {
+        position: fixed; bottom: 20px; left: 20px; background: #25d366; color: white;
+        padding: 12px 18px; border-radius: 50px; font-weight: bold; text-decoration: none;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: 0.3s;
+    }
+    .cs-button:hover {background: #1ebe5d; transform: scale(1.05);}
+    footer {
+        background:rgba(27, 94, 32, 0.9); color:#fff;
+        text-align:center; padding:10px; margin-top:20px;
+    }
+</style>
+</head>
+<body>
+
+<header id="headerTitle">WPTOPUP 🌿</header>
+
+<!-- Step 1 -->
+<div class="container" id="step1">
+    <h2>Pilih Game</h2>
+    <div class="grid" id="gameList"></div>
+</div>
+
+<!-- Step 2 -->
+<div class="container hidden" id="step2">
+    <h2 id="gameTitle"></h2>
+    <input type="text" id="userID" placeholder="Masukkan ID / Username">
+    <br>
+    <button onclick="nextStep3()">Lanjut</button>
+</div>
+
+<!-- Step 3 -->
+<div class="container hidden" id="step3">
+    <h2>Pilih Nominal</h2>
+    <div class="grid" id="nominalList"></div>
+</div>
+
+<!-- Step 4 -->
+<div class="container hidden" id="step4">
+    <h2>Pilih Pembayaran</h2>
+    <div class="grid" id="paymentList"></div>
+</div>
+
+<!-- Step 5 -->
+<div class="container hidden" id="step5">
+    <h2>Struk Order</h2>
+    <pre id="strukText"></pre>
+    <button onclick="sendWhatsApp()">Kirim ke WhatsApp</button>
+</div>
+
+<a href="https://wa.me/6285215838062?text=Halo%20Customer%20Service%20WPTOPUP" 
+   class="cs-button" target="_blank">📞 Customer Service</a>
+
+<footer>© 2025 WAHYU PROJECT</footer>
+
+<script>
+let selectedGame = "", selectedNominal = "", userID = "", selectedPayment = "";
+let currentStep = 1;
+
+const games = [
+    "Free Fire","Mobile Legends","PUBG Mobile","Roblox","Valorant",
+    "Genshin Impact","Higgs Domino","COD Mobile","Point Blank","Arena of Valor",
+    "Honkai: Star Rail","Clash of Clans","Clash Royale","FIFA Mobile","Minecraft"
+];
+
+const nominalData = {
+    "Free Fire": ["70 Diamonds","140 Diamonds","210 Diamonds","355 Diamonds","500 Diamonds","720 Diamonds","1000 Diamonds","1450 Diamonds","2000 Diamonds","2180 Diamonds","3000 Diamonds","3640 Diamonds","7290 Diamonds"],
+    "Mobile Legends": ["86 Diamonds","172 Diamonds","257 Diamonds","344 Diamonds","429 Diamonds","514 Diamonds","706 Diamonds","878 Diamonds","1412 Diamonds","2195 Diamonds","3688 Diamonds","5532 Diamonds"],
+    "PUBG Mobile": ["60 UC","120 UC","325 UC","500 UC","660 UC","1000 UC","1800 UC","2500 UC","3850 UC","5000 UC","8100 UC","16200 UC"],
+    "Roblox": ["80 Robux","200 Robux","400 Robux","800 Robux","1200 Robux","1600 Robux","2000 Robux","3200 Robux","5000 Robux","6400 Robux"],
+    "Valorant": ["475 VP","800 VP","1000 VP","1500 VP","2050 VP","3000 VP","3650 VP","5000 VP","5350 VP","11000 VP"],
+    "Genshin Impact": ["60 GC","150 GC","300 GC","490 GC","980 GC","1480 GC","1980 GC","3280 GC","4880 GC","6480 GC"],
+    "Higgs Domino": ["30M Koin","60M Koin","100M Koin","150M Koin","200M Koin","300M Koin","400M Koin","600M Koin","1B Koin","2B Koin"],
+    "COD Mobile": ["63 CP","128 CP","318 CP","450 CP","645 CP","1000 CP","1373 CP","2400 CP","3564 CP","7656 CP","15888 CP"],
+    "Point Blank": ["1200 PB Cash","2400 PB Cash","4000 PB Cash","6000 PB Cash","8000 PB Cash","12000 PB Cash","24000 PB Cash","48000 PB Cash"],
+    "Arena of Valor": ["40 Voucher","90 Voucher","150 Voucher","230 Voucher","300 Voucher","470 Voucher","950 Voucher","1430 Voucher","2390 Voucher"],
+    "Honkai: Star Rail": ["60 Oneiric","150 Oneiric","300 Oneiric","490 Oneiric","980 Oneiric","1480 Oneiric","1980 Oneiric","3280 Oneiric","4880 Oneiric","6480 Oneiric"],
+    "Clash of Clans": ["500 Gems","1000 Gems","1200 Gems","2500 Gems","5000 Gems","6500 Gems","10000 Gems","12000 Gems","15000 Gems"],
+    "Clash Royale": ["500 Gems","1000 Gems","1200 Gems","2500 Gems","5000 Gems","6500 Gems","10000 Gems","12000 Gems"],
+    "FIFA Mobile": ["500 FP","1050 FP","2200 FP","3000 FP","5750 FP","8000 FP","12000 FP"],
+    "Minecraft": ["Minecoins 1720","Minecoins 3500","Minecoins 5000","Minecoins 8800","Minecoins 12000","Minecoins 17200"]
+};
+
+const payments = ["QRIS", "Dana", "OVO", "GoPay", "ShopeePay", "BCA", "BRI", "Mandiri"];
+
+let gameListDiv = document.getElementById("gameList");
+games.forEach(game => {
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = game;
+    div.onclick = () => selectGame(game);
+    gameListDiv.appendChild(div);
+});
+
+function selectGame(game) {
+    selectedGame = game;
+    document.getElementById("gameTitle").innerText = "Game: " + game;
+    showStep(2);
+}
+
+function nextStep3() {
+    userID = document.getElementById("userID").value.trim();
+    if(userID === "") { alert("Silakan isi ID / Username!"); return; }
+    let list = document.getElementById("nominalList");
+    list.innerHTML = "";
+    nominalData[selectedGame].forEach(nominal => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.innerText = nominal;
+        div.onclick = () => { selectedNominal = nominal; nextStep4(); };
+        list.appendChild(div);
+    });
+    showStep(3);
+}
+
+function nextStep4() {
+    let list = document.getElementById("paymentList");
+    list.innerHTML = "";
+    payments.forEach(method => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.innerText = method;
+        div.onclick = () => { selectedPayment = method; showStruk(); };
+        list.appendChild(div);
+    });
+    showStep(4);
+}
+
+function showStruk() {
+    let struk = 
+`====================
+     WPTOPUP
+====================
+Game        : ${selectedGame}
+ID/Username : ${userID}
+Nominal     : ${selectedNominal}
+Pembayaran  : ${selectedPayment}
+Status      : Menunggu Konfirmasi Admin
+====================`;
+    document.getElementById("strukText").innerText = struk;
+    showStep(5);
+}
+
+function sendWhatsApp() {
+    let phone = "6287778913867";
+    let message = `DM: ${selectedGame}%0AID: ${userID}%0ANOMINAL: ${selectedNominal}%0APEMBAYARAN: ${selectedPayment}`;
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+}
+
+function showStep(step) {
+    currentStep = step;
+    for(let i=1; i<=5; i++) {
+        document.getElementById("step"+i).classList.add("hidden");
+    }
+    document.getElementById("step"+step).classList.remove("hidden");
+    document.getElementById("headerTitle").innerHTML = step > 1 ? `<button class="back-btn" onclick="goBack()">⬅</button> WPTOPUP 🌿` : "WPTOPUP 🌿";
+}
+
+function goBack() {
+    if(currentStep > 1) {
+        showStep(currentStep - 1);
+    }
+}
+</script>
+</body>
+</html>
