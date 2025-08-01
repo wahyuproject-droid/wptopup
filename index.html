@@ -8,7 +8,7 @@
     body {
         font-family: Arial, sans-serif;
         margin:0;
-        background: url('image.png') no-repeat center center fixed;
+        background: url('awan.png') no-repeat center center fixed;
         background-size: cover;
         color:#222;
         position: relative;
@@ -17,13 +17,27 @@
         content: "";
         position: fixed;
         top:0; left:0; right:0; bottom:0;
-        background: rgba(46, 125, 50, 0.65);
+        background: rgba(255, 255, 255, 0.6);
         z-index: -1;
     }
+    @keyframes gradasiBerjalan {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
     header {
-        background:rgba(27, 94, 32, 0.9);
-        color:#fff; text-align:center; padding:15px;
-        font-size:1.5rem; font-weight:bold; position:relative;
+        background:rgba(27, 94, 32, 0.8);
+        padding:15px;
+        font-size:1.5rem;
+        font-weight:bold;
+        position:relative;
+        text-align:center;
+        color:transparent;
+        background-image: linear-gradient(90deg, #ffffff, #ffeb3b, #ffffff);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: gradasiBerjalan 3s infinite linear;
     }
     .back-btn {
         position:absolute; left:10px; top:10px;
@@ -34,8 +48,13 @@
     .container {max-width:900px; margin:auto; padding:20px; text-align:center;}
     .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:15px;}
     .card, .item, button {
-        background:rgba(255,255,255,0.9); padding:10px; border-radius:8px; border:2px solid #2e7d32;
-        cursor:pointer; font-weight:bold; transition:0.3s;
+        background:rgba(255,255,255,0.9);
+        padding:10px;
+        border-radius:8px;
+        border:2px solid #2e7d32;
+        cursor:pointer;
+        font-weight:bold;
+        transition:0.3s;
     }
     .card:hover, .item:hover, button:hover {background:rgba(200, 230, 201, 0.9);}
     .item small {display:block; font-weight:normal; color:#444; margin-top:4px;}
@@ -49,7 +68,7 @@
         box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: 0.3s;
     }
     .cs-button:hover {background: #1ebe5d; transform: scale(1.05);}
-    footer {background:rgba(27, 94, 32, 0.9); color:#fff; text-align:center; padding:10px; margin-top:20px;}
+    footer {background:rgba(27, 94, 32, 0.8); color:#fff; text-align:center; padding:10px; margin-top:20px;}
 </style>
 </head>
 <body>
@@ -99,7 +118,7 @@ const games = [
     "Honkai: Star Rail","Clash of Clans","Clash Royale","FIFA Mobile","Minecraft"
 ];
 
-// Nominal + Harga Pasaran
+// Nominal dan harga pasaran
 const nominalData = {
     "Free Fire": [
         {nominal:"70 Diamonds", price:"Rp 10.000"},
@@ -131,12 +150,160 @@ const nominalData = {
         {nominal:"1800 UC", price:"Rp 300.000"},
         {nominal:"3850 UC", price:"Rp 600.000"},
         {nominal:"8100 UC", price:"Rp 1.200.000"}
+    ],
+    "Roblox": [
+        {nominal:"80 Robux", price:"Rp 15.000"},
+        {nominal:"400 Robux", price:"Rp 65.000"},
+        {nominal:"800 Robux", price:"Rp 130.000"},
+        {nominal:"1700 Robux", price:"Rp 270.000"},
+        {nominal:"4500 Robux", price:"Rp 700.000"}
+    ],
+    "Valorant": [
+        {nominal:"475 VP", price:"Rp 50.000"},
+        {nominal:"1000 VP", price:"Rp 105.000"},
+        {nominal:"2050 VP", price:"Rp 210.000"},
+        {nominal:"5350 VP", price:"Rp 530.000"}
+    ],
+    "Genshin Impact": [
+        {nominal:"60 Genesis", price:"Rp 15.000"},
+        {nominal:"300 Genesis", price:"Rp 75.000"},
+        {nominal:"980 Genesis", price:"Rp 240.000"},
+        {nominal:"1980 Genesis", price:"Rp 470.000"},
+        {nominal:"6480 Genesis", price:"Rp 1.400.000"}
+    ],
+    "Higgs Domino": [
+        {nominal:"30M Koin", price:"Rp 5.000"},
+        {nominal:"60M Koin", price:"Rp 10.000"},
+        {nominal:"200M Koin", price:"Rp 30.000"},
+        {nominal:"1B Koin", price:"Rp 120.000"}
+    ],
+    "COD Mobile": [
+        {nominal:"63 CP", price:"Rp 15.000"},
+        {nominal:"318 CP", price:"Rp 75.000"},
+        {nominal:"634 CP", price:"Rp 150.000"},
+        {nominal:"1373 CP", price:"Rp 320.000"}
+    ],
+    "Point Blank": [
+        {nominal:"1200 PB Cash", price:"Rp 10.000"},
+        {nominal:"2400 PB Cash", price:"Rp 20.000"},
+        {nominal:"12000 PB Cash", price:"Rp 100.000"}
+    ],
+    "Arena of Valor": [
+        {nominal:"40 Voucher", price:"Rp 10.000"},
+        {nominal:"230 Voucher", price:"Rp 50.000"},
+        {nominal:"1430 Voucher", price:"Rp 300.000"}
+    ],
+    "Honkai: Star Rail": [
+        {nominal:"60 Oneiric", price:"Rp 15.000"},
+        {nominal:"300 Oneiric", price:"Rp 75.000"},
+        {nominal:"980 Oneiric", price:"Rp 240.000"},
+        {nominal:"6480 Oneiric", price:"Rp 1.400.000"}
+    ],
+    "Clash of Clans": [
+        {nominal:"500 Gems", price:"Rp 75.000"},
+        {nominal:"1200 Gems", price:"Rp 150.000"},
+        {nominal:"6500 Gems", price:"Rp 750.000"}
+    ],
+    "Clash Royale": [
+        {nominal:"500 Gems", price:"Rp 75.000"},
+        {nominal:"1200 Gems", price:"Rp 150.000"},
+        {nominal:"6500 Gems", price:"Rp 750.000"}
+    ],
+    "FIFA Mobile": [
+        {nominal:"500 FP", price:"Rp 50.000"},
+        {nominal:"2200 FP", price:"Rp 200.000"},
+        {nominal:"12000 FP", price:"Rp 1.000.000"}
+    ],
+    "Minecraft": [
+        {nominal:"1720 Minecoins", price:"Rp 150.000"},
+        {nominal:"8800 Minecoins", price:"Rp 750.000"}
     ]
-    // Game lain bisa ditambahin sama format ini
 };
 
 const payments = ["QRIS", "Dana", "OVO", "GoPay", "ShopeePay", "BCA", "BRI", "Mandiri"];
 
+let gameListDiv = document.getElementById("gameList");
+games.forEach(game => {
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = game;
+    div.onclick = () => selectGame(game);
+    gameListDiv.appendChild(div);
+});
+
+function selectGame(game) {
+    selectedGame = game;
+    document.getElementById("gameTitle").innerText = "Game: " + game;
+    showStep(2);
+}
+
+function nextStep3() {
+    userID = document.getElementById("userID").value.trim();
+    if(userID === "") { alert("Silakan isi ID / Username!"); return; }
+    let list = document.getElementById("nominalList");
+    list.innerHTML = "";
+    (nominalData[selectedGame] || []).forEach(item => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `${item.nominal} <small>${item.price}</small>`;
+        div.onclick = () => { selectedNominal = item.nominal; selectedPrice = item.price; nextStep4(); };
+        list.appendChild(div);
+    });
+    showStep(3);
+}
+
+function nextStep4() {
+    let list = document.getElementById("paymentList");
+    list.innerHTML = "";
+    payments.forEach(method => {
+        let div = document.createElement("div");
+        div.className = "item";
+        div.innerText = method;
+        div.onclick = () => { selectedPayment = method; showStruk(); };
+        list.appendChild(div);
+    });
+    showStep(4);
+}
+
+function showStruk() {
+    let struk = 
+`====================
+     WPTOPUP
+====================
+Game        : ${selectedGame}
+ID/Username : ${userID}
+Nominal     : ${selectedNominal}
+Harga       : ${selectedPrice}
+Pembayaran  : ${selectedPayment}
+Status      : Menunggu Konfirmasi Admin
+====================`;
+    document.getElementById("strukText").innerText = struk;
+    showStep(5);
+}
+
+function sendWhatsApp() {
+    let phone = "6287778913867";
+    let message = `DM: ${selectedGame}%0AID: ${userID}%0ANOMINAL: ${selectedNominal}%0AHARGA: ${selectedPrice}%0APEMBAYARAN: ${selectedPayment}`;
+    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+}
+
+function showStep(step) {
+    currentStep = step;
+    for(let i=1; i<=5; i++) {
+        document.getElementById("step"+i).classList.add("hidden");
+    }
+    document.getElementById("step"+step).classList.remove("hidden");
+    document.getElementById("headerTitle").innerHTML = step > 1 ? `<button class="back-btn" onclick="goBack()">⬅</button> WPTOPUP 🌿` : "WPTOPUP 🌿";
+}
+
+function goBack() {
+    if(currentStep > 1) {
+        showStep(currentStep - 1);
+    }
+}
+</script>
+</body>
+</html>
 let gameListDiv = document.getElementById("gameList");
 games.forEach(game => {
     let div = document.createElement("div");
