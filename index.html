@@ -1,214 +1,229 @@
-4804 0107 5671 539    font-size:0.9rem;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPTOPUP 💎</title>
+<style>
+body {margin:0;font-family:Arial,sans-serif;background:#000;color:#fff;}
+header {background:linear-gradient(to right, gold, black);padding:10px;display:flex;justify-content:space-between;align-items:center;font-weight:bold;}
+.menu-icon {font-size:28px;cursor:pointer;}
+.sidebar {height:100%;width:0;position:fixed;top:0;left:0;background:#111;overflow-x:hidden;transition:0.3s;padding-top:60px;z-index:999;}
+.sidebar.open {width:70%;}
+.sidebar a {padding:10px 20px;display:block;color:white;text-decoration:none;font-size:18px;}
+.sidebar a:hover {background:#575757;}
+.close-btn {position:absolute;top:10px;right:25px;font-size:30px;cursor:pointer;}
+main {padding:15px;}
+.btn {background:gold;color:black;padding:10px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:inline-block;margin:5px 0;}
+.category-list,.game-list,.nominal-list,.payment-list {display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.item {background:#222;padding:10px;border-radius:8px;text-align:center;cursor:pointer;}
+.item:hover {background:#333;}
+footer {text-align:center;padding:10px;background:#111;font-size:12px;}
+input {padding:5px;width:100%;margin:5px 0;border-radius:5px;border:none;}
 </style>
 </head>
 <body>
 
 <header>
-    <button onclick="toggleMenu()">☰</button>
-    <div>WPTOPUP 💎</div>
-    <div id="saldoHeader">Rp 0</div>
+    <span class="menu-icon" onclick="openSidebar()">☰</span>
+    <span>WPTOPUP 💎</span>
+    <span id="saldoDisplay">Rp 0</span>
 </header>
 
-<div class="sidebar" id="sidebar">
-    <button class="back-btn" onclick="toggleMenu()">⬅ Kembali</button>
-    <a href="#" onclick="showLogin()">🔑 Login</a>
-    <a href="#" onclick="showRegister()">📝 Daftar</a>
-    <a href="#" onclick="showSaldo()">💰 Saldo: <span id="saldoMenu">0</span></a>
-    <a href="#" onclick="topUpSaldo()">➕ Top Up Saldo</a>
-    <a href="#" onclick="pilihGame()">🎮 Top Up Game/Voucher</a>
+<div id="sidebar" class="sidebar">
+    <span class="close-btn" onclick="closeSidebar()">×</span>
+    <a href="#" onclick="showHome()">🏠 Home</a>
+    <a href="#" onclick="showCategories()">🎮 Top Up</a>
+    <a href="#" onclick="showLogin()">🔑 Login / Deposit</a>
 </div>
 
-<div class="container" id="mainContent">
-    <h2>Selamat Datang di WPTOPUP 💎</h2>
-    <button onclick="pilihGame()">🎮 Mulai Top Up Game/Voucher</button>
-    <button onclick="showLogin()">🔑 Login Untuk Deposit</button>
-</div>
+<main id="content"></main>
 
-<footer>© 2025 WPTOPUP | IB : WAHYU PROJECT</footer>
+<footer>
+    © 2025 WPTOPUP | IB : WAHYU PROJECT
+</footer>
 
 <script>
-let akun = JSON.parse(localStorage.getItem('akun')) || [];
-let loginUser = JSON.parse(localStorage.getItem('loginUser')) || null;
-let saldo = JSON.parse(localStorage.getItem('saldo')) || 0;
+let saldo = 0;
+let loggedInUser = null;
+let selectedGame = null;
+let selectedItem = null;
+let selectedPrice = 0;
+let selectedUserId = "";
 
-function updateSaldo(){
-    document.getElementById("saldoHeader").innerText = "Rp " + saldo.toLocaleString();
-    document.getElementById("saldoMenu").innerText = saldo.toLocaleString();
+const categories = {
+    "Mobile Games": ["Mobile Legends", "Free Fire", "PUBG Mobile", "COD Mobile", "Genshin Impact", "Higgs Domino"],
+    "PC Games": ["Valorant", "Point Blank", "Apex Legends", "League of Legends"],
+    "Vouchers": ["Roblox", "Google Play", "Steam Wallet", "Garena Voucher"]
+};
+
+// FULL NOMINAL PASARAN
+const gameNominals = {
+    "Mobile Legends": [
+        ["5 Diamond",1500],["12 Diamond",3500],["19 Diamond",5000],["28 Diamond",6500],["36 Diamond",8500],["44 Diamond",10500],
+        ["59 Diamond",13500],["86 Diamond",20000],["172 Diamond",40000],["257 Diamond",60000],["344 Diamond",80000],
+        ["429 Diamond",100000],["514 Diamond",120000],["706 Diamond",160000],["878 Diamond",200000],["1050 Diamond",240000],
+        ["1412 Diamond",320000],["2195 Diamond",500000]
+    ],
+    "Free Fire": [
+        ["5 Diamond",1500],["12 Diamond",3500],["50 Diamond",8000],["70 Diamond",10000],["100 Diamond",14000],["140 Diamond",20000],
+        ["355 Diamond",50000],["720 Diamond",100000],["1450 Diamond",200000],["2180 Diamond",300000],["3640 Diamond",500000]
+    ],
+    "PUBG Mobile": [
+        ["60 UC",15000],["120 UC",30000],["325 UC",75000],["660 UC",150000],["1800 UC",400000],["3850 UC",800000],["8100 UC",1600000]
+    ],
+    "COD Mobile": [
+        ["80 CP",15000],["420 CP",75000],["880 CP",150000],["2400 CP",400000],["5000 CP",800000]
+    ],
+    "Genshin Impact": [
+        ["60 GC",15000],["300+30 GC",75000],["980+110 GC",250000],["1980+260 GC",500000],["3280+600 GC",800000],["6480+1600 GC",1600000]
+    ],
+    "Higgs Domino": [
+        ["30M Koin",10000],["60M Koin",20000],["100M Koin",30000],["200M Koin",60000],["400M Koin",120000]
+    ],
+    "Valorant": [
+        ["125 VP",15000],["420 VP",50000],["700 VP",80000],["1375 VP",150000],["2400 VP",250000],["4000 VP",400000]
+    ],
+    "Point Blank": [
+        ["1200 Cash",10000],["2400 Cash",20000],["6000 Cash",50000],["12000 Cash",100000]
+    ],
+    "Apex Legends": [
+        ["435 Coins",50000],["1000 Coins",100000],["2150 Coins",200000],["4350 Coins",400000]
+    ],
+    "League of Legends": [
+        ["225 RP",20000],["650 RP",50000],["1380 RP",100000],["2800 RP",200000]
+    ],
+    "Roblox": [
+        ["80 Robux",15000],["400 Robux",75000],["800 Robux",150000],["1700 Robux",300000],["4500 Robux",800000]
+    ],
+    "Google Play": [
+        ["IDR 50.000",50000],["IDR 100.000",100000],["IDR 150.000",150000],["IDR 300.000",300000],["IDR 500.000",500000]
+    ],
+    "Steam Wallet": [
+        ["IDR 60.000",60000],["IDR 120.000",120000],["IDR 250.000",250000],["IDR 400.000",400000],["IDR 600.000",600000]
+    ],
+    "Garena Voucher": [
+        ["50 Shell",10000],["100 Shell",20000],["300 Shell",50000],["500 Shell",80000]
+    ]
+};
+
+function openSidebar(){document.getElementById("sidebar").classList.add("open");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");}
+function updateSaldo(){document.getElementById("saldoDisplay").textContent = loggedInUser ? `${loggedInUser} | Rp ${saldo.toLocaleString()}` : `Rp ${saldo.toLocaleString()}`;}
+
+function showHome(){
+    document.getElementById("content").innerHTML = `
+        <h2>Selamat Datang di WPTOPUP 💎</h2>
+        <button class="btn" onclick="showCategories()">Mulai Top Up</button>
+        <button class="btn" onclick="showLogin()">Login untuk Deposit</button>
+    `;
+    closeSidebar();
 }
 
-function toggleMenu(){
-    document.getElementById("sidebar").classList.toggle("open");
-    updateSaldo();
+function showCategories(){
+    let html = `<h2>Pilih Kategori</h2><div class="category-list">`;
+    for(let cat in categories){
+        html += `<div class="item" onclick="showGames('${cat}')">${cat}</div>`;
+    }
+    html += `</div>`;
+    document.getElementById("content").innerHTML = html;
+    closeSidebar();
 }
+
+function showGames(cat){
+    let html = `<h2>${cat}</h2><div class="game-list">`;
+    categories[cat].forEach(g => {
+        html += `<div class="item" onclick="showNominals('${g}')">${g}</div>`;
+    });
+    html += `</div><button class="btn" onclick="showCategories()">⬅ Kembali</button>`;
+    document.getElementById("content").innerHTML = html;
+}
+
+function showNominals(game){
+    selectedGame = game;
+    let html = `<h2>${game}</h2><input id="userId" placeholder="Masukkan ID / Username"><div class="nominal-list">`;
+    gameNominals[game].forEach(([item,price])=>{
+        html += `<div class="item" onclick="chooseNominal('${item}',${price})">${item}<br>Rp ${price.toLocaleString()}</div>`;
+    });
+    html += `</div><button class="btn" onclick="showGames(findCategory('${game}'))">⬅ Kembali</button>`;
+    document.getElementById("content").innerHTML = html;
+}
+
+function findCategory(game){
+    for(let cat in categories){
+        if(categories[cat].includes(game)) return cat;
+    }
+}
+
+function chooseNominal(item,price){
+    selectedItem = item;
+    selectedPrice = price;
+    selectedUserId = document.getElementById("userId").value;
+    if(!selectedUserId){alert("Masukkan ID / Username terlebih dahulu!");return;}
+    showPayments();
+}
+
+function showPayments(){
+    let html = `<h2>Pilih Metode Pembayaran</h2>
+        <p>Game: ${selectedGame}</p>
+        <p>Item: ${selectedItem}</p>
+        <p>Harga: Rp ${selectedPrice.toLocaleString()}</p>
+        <div class="payment-list">
+            <div class="item" onclick="payWithSaldo()">💰 Saldo</div>
+            <div class="item" onclick="payWithWA()">📱 WhatsApp</div>
+            <div class="item" onclick="payWithATM()">🏦 ATM</div>
+            <div class="item" onclick="payWithQR()">🔳 QRIS</div>
+            <div class="item" onclick="payWithEwallet()">📲 E-Wallet</div>
+        </div>
+        <button class="btn" onclick="showNominals('${selectedGame}')">⬅ Kembali</button>
+    `;
+    document.getElementById("content").innerHTML = html;
+}
+
+function payWithSaldo(){
+    if(!loggedInUser){alert("Login untuk membayar dengan saldo!");return;}
+    if(saldo >= selectedPrice){
+        saldo -= selectedPrice;
+        updateSaldo();
+        alert(`✅ Top Up ${selectedGame} ${selectedItem} sukses via saldo!`);
+        showHome();
+    } else {
+        alert("❌ Saldo tidak cukup!");
+    }
+}
+function payWithWA(){
+    let pesan = `Top Up ${selectedGame} ${selectedItem}%0AID: ${selectedUserId}%0AHarga: Rp ${selectedPrice.toLocaleString()}`;
+    window.open(`https://wa.me/087778913867?text=${pesan}`,"_blank");
+}
+function payWithATM(){alert(`🏦 Transfer ke BCA 4804 0107 5671 539 a.n WPTOPUP\nJumlah: Rp ${selectedPrice.toLocaleString()}`);}
+function payWithQR(){alert(`🔳 minta QRIS ke whatsapp kami untuk membayar Rp ${selectedPrice.toLocaleString()}`);}
+function payWithEwallet(){alert(`📲 Transfer ke Dana/Gopay 085210567509 abis itu bukti ke whatsapp \nJumlah: Rp ${selectedPrice.toLocaleString()}`);}
 
 function showLogin(){
-    document.getElementById("mainContent").innerHTML = `
-    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
-    <h2>Login</h2>
-    <label>Username</label><input id='loginUserInput'>
-    <label>Password</label><input id='loginPassInput' type='password'>
-    <button onclick='login()'>Login</button>`;
-}
-
-function showRegister(){
-    document.getElementById("mainContent").innerHTML = `
-    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
-    <h2>Daftar</h2>
-    <label>Username</label><input id='regUser'>
-    <label>Password</label><input id='regPass' type='password'>
-    <button onclick='register()'>Daftar</button>`;
-}
-
-function showSaldo(){
-    document.getElementById("mainContent").innerHTML = `
-    <button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
-    <h2>Saldo Anda</h2><p>Rp ${saldo.toLocaleString()}</p>`;
-}
-
-function topUpSaldo(){
-    if(!loginUser){showLogin();return;}
-    let nominalList = [10000,20000,50000,100000,150000,200000,300000,500000,1000000];
-    let html = `<button class='back-btn' onclick='showMain()'>⬅ Kembali</button>
-    <h2>Top Up Saldo</h2><div class='grid'>`;
-    nominalList.forEach(n=>{
-        html += `<div class='card' onclick='prosesTopUp(${n})'>Rp ${n.toLocaleString()}</div>`;
-    });
-    html += `</div>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function prosesTopUp(nominal){
-    let struk = `TOP UP SALDO\nUsername: ${loginUser}\nNominal: Rp ${nominal.toLocaleString()}`;
-    let phone = "6287778913867";
-    saldo += nominal;
-    localStorage.setItem('saldo', saldo);
-    updateSaldo();
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(struk)}`, "_blank");
-    showSaldo();
-}
-
-function register(){
-    let user = document.getElementById("regUser").value.trim();
-    let pass = document.getElementById("regPass").value.trim();
-    if(user && pass){
-        if(akun.find(a=>a.user===user)){
-            alert("Username sudah ada");
-            return;
-        }
-        akun.push({user,pass});
-        localStorage.setItem('akun', JSON.stringify(akun));
-        alert("Pendaftaran berhasil");
-        showLogin();
-    } else {
-        alert("Isi semua data");
-    }
-}
-
-function login(){
-    let user = document.getElementById("loginUserInput").value.trim();
-    let pass = document.getElementById("loginPassInput").value.trim();
-    let a = akun.find(a=>a.user===user && a.pass===pass);
-    if(a){
-        loginUser = user;
-        localStorage.setItem('loginUser', JSON.stringify(user));
-        alert("Login berhasil");
-        showMain();
-    } else {
-        alert("Username atau password salah");
-    }
-}
-
-function showMain(){
-    document.getElementById("mainContent").innerHTML = `
-        <h2>Selamat Datang di WPTOPUP 💎</h2>
-        <button onclick="pilihGame()">🎮 Mulai Top Up Game/Voucher</button>
-        <button onclick="showLogin()">🔑 Login Untuk Deposit</button>
+    document.getElementById("content").innerHTML = `
+        <h2>Login</h2>
+        <input id="username" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <button class="btn" onclick="login()">Login</button>
     `;
 }
 
-function pilihGame(){
-    let games = [
-        "Free Fire","Mobile Legends","PUBG Mobile","Roblox","Valorant","COD Mobile","Higgs Domino","Genshin Impact",
-        "Google Play Voucher","Garena Shells","Steam Wallet","PlayStation Network","Xbox Live","Apex Legends","Point Blank",
-        "Ragnarok","Lost Saga","Arena of Valor","League of Legends","FIFA Mobile","Dragon Raja","Lords Mobile"
-    ];
-    let html = `<button class='back-btn' onclick='showMain()'>⬅ Kembali</button><h2>Pilih Game/Voucher</h2><div class='grid'>`;
-    games.forEach(g=>{
-        html += `<div class='card' onclick='masukkanID("${g}")'>${g}</div>`;
-    });
-    html += `</div>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function masukkanID(game){
-    let html = `<button class='back-btn' onclick='pilihGame()'>⬅ Kembali</button>
-    <h2>${game}</h2>
-    <label>ID / Username / Nomor HP</label><input id='userID'>
-    <label>Server (Opsional)</label><input id='serverID'>
-    <button onclick='pilihNominal("${game}")'>Lanjut</button>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function pilihNominal(game){
-    let nominalData = {
-        "Free Fire":[["70 Diamonds",10000],["140 Diamonds",20000],["355 Diamonds",50000],["720 Diamonds",100000],["1450 Diamonds",200000]],
-        "Mobile Legends":[["86 Diamonds",20000],["172 Diamonds",40000],["257 Diamonds",60000],["514 Diamonds",120000],["1050 Diamonds",240000]],
-        "PUBG Mobile":[["60 UC",15000],["325 UC",75000],["660 UC",150000],["1800 UC",350000]],
-        "Roblox":[["80 Robux",15000],["400 Robux",75000],["800 Robux",150000]],
-        "Valorant":[["475 VP",50000],["1000 VP",100000],["2050 VP",200000]],
-        "COD Mobile":[["80 CP",15000],["420 CP",75000],["880 CP",150000]],
-        "Higgs Domino":[["30M Chip",10000],["60M Chip",20000],["200M Chip",50000]],
-        "Genshin Impact":[["60 Genesis",15000],["300 Genesis",75000],["980 Genesis",240000]],
-        "Google Play Voucher":[["50K",50000],["100K",100000],["150K",150000],["300K",300000]],
-        "Garena Shells":[["33 Shell",10000],["66 Shell",20000],["165 Shell",50000]],
-        "Steam Wallet":[["60K",60000],["120K",120000],["250K",250000],["500K",500000]],
-        "PlayStation Network":[["100K",100000],["200K",200000],["500K",500000]],
-        "Xbox Live":[["100K",100000],["200K",200000],["500K",500000]],
-        "Apex Legends":[["435 Coins",75000],["1000 Coins",150000],["2150 Coins",300000]],
-        "Point Blank":[["1200 PB Cash",10000],["2400 PB Cash",20000],["6000 PB Cash",50000]],
-        "Ragnarok":[["50 Kafra",50000],["100 Kafra",100000]],
-        "Lost Saga":[["5000 Peso",50000],["10000 Peso",100000]],
-        "Arena of Valor":[["40 Vouchers",10000],["90 Vouchers",20000],["230 Vouchers",50000]],
-        "League of Legends":[["400 RP",50000],["1000 RP",100000]],
-        "FIFA Mobile":[["500 FIFA Points",50000],["1050 FIFA Points",100000]],
-        "Dragon Raja":[["60 Diamonds",10000],["300 Diamonds",50000]],
-        "Lords Mobile":[["500 Gems",50000],["1050 Gems",100000]]
-    };
-    let html = `<button class='back-btn' onclick='masukkanID("${game}")'>⬅ Kembali</button><h2>Pilih Nominal</h2><div class='grid'>`;
-    (nominalData[game]||[]).forEach(item=>{
-        html += `<div class='card' onclick='pilihPembayaran("${game}","${item[0]}",${item[1]})'>${item[0]}<br>Rp ${item[1].toLocaleString()}</div>`;
-    });
-    html += `</div>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function pilihPembayaran(game,nominal,harga){
-    let payments = ["QRIS","Dana","OVO","GoPay","ShopeePay","BCA","BRI","Mandiri"];
-    let html = `<button class='back-btn' onclick='pilihNominal("${game}")'>⬅ Kembali</button><h2>Pilih Pembayaran</h2><div class='grid'>`;
-    payments.forEach(p=>{
-        html += `<div class='card' onclick='tampilStruk("${game}","${nominal}",${harga},"${p}")'>${p}</div>`;
-    });
-    html += `</div>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function tampilStruk(game,nominal,harga,payment){
-    let id = document.getElementById("userID").value;
-    let server = document.getElementById("serverID").value;
-    let struk = `WPTOPUP 💎\nGame/Voucher: ${game}\nID/Server/No HP: ${id}${server?" ("+server+")":""}\nNominal: ${nominal}\nHarga: Rp ${harga.toLocaleString()}\nPembayaran: ${payment}`;
-    let html = `<button class='back-btn' onclick='pilihPembayaran("${game}","${nominal}",${harga})'>⬅ Kembali</button>
-    <h2>Struk</h2><pre>${struk}</pre>
-    <button onclick='sendWhatsApp(\`${encodeURIComponent(struk)}\`)'>📲 Kirim WhatsApp</button>`;
-    document.getElementById("mainContent").innerHTML = html;
-}
-
-function sendWhatsApp(msg){
-    let phone = "6287778913867";
-    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+function login(){
+    let u = document.getElementById("username").value;
+    let p = document.getElementById("password").value;
+    if(u && p){
+        loggedInUser = u;
+        saldo = 50000;
+        updateSaldo();
+        showHome();
+    } else {
+        alert("Isi username dan password!");
+    }
 }
 
 updateSaldo();
+showHome();
 </script>
+
 </body>
 </html>
