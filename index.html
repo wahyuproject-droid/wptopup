@@ -1,229 +1,1040 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WPTOPUP 💎</title>
-<style>
-body {margin:0;font-family:Arial,sans-serif;background:#000;color:#fff;}
-header {background:linear-gradient(to right, gold, black);padding:10px;display:flex;justify-content:space-between;align-items:center;font-weight:bold;}
-.menu-icon {font-size:28px;cursor:pointer;}
-.sidebar {height:100%;width:0;position:fixed;top:0;left:0;background:#111;overflow-x:hidden;transition:0.3s;padding-top:60px;z-index:999;}
-.sidebar.open {width:70%;}
-.sidebar a {padding:10px 20px;display:block;color:white;text-decoration:none;font-size:18px;}
-.sidebar a:hover {background:#575757;}
-.close-btn {position:absolute;top:10px;right:25px;font-size:30px;cursor:pointer;}
-main {padding:15px;}
-.btn {background:gold;color:black;padding:10px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:inline-block;margin:5px 0;}
-.category-list,.game-list,.nominal-list,.payment-list {display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-.item {background:#222;padding:10px;border-radius:8px;text-align:center;cursor:pointer;}
-.item:hover {background:#333;}
-footer {text-align:center;padding:10px;background:#111;font-size:12px;}
-input {padding:5px;width:100%;margin:5px 0;border-radius:5px;border:none;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPShop - Top Up Game Termurah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .neon-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .neon-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(79, 70, 229, 0),
+                rgba(99, 102, 241, 0.5),
+                rgba(79, 70, 229, 0)
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .diamond-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .diamond-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .diamond-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+            z-index: 1;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-confetti {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-confetti::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(255, 0, 0, 0.7), 
+                rgba(255, 165, 0, 0.7), 
+                rgba(255, 255, 0, 0.7),
+                rgba(0, 128, 0, 0.7), 
+                rgba(0, 0, 255, 0.7),
+                rgba(75, 0, 130, 0.7),
+                rgba(238, 130, 238, 0.7));
+            background-size: 400% 400%;
+            opacity: 0;
+            z-index: -1;
+            animation: gradient 15s ease infinite, fadeInOut 0.5s;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+    </style>
 </head>
-<body>
-
-<header>
-    <span class="menu-icon" onclick="openSidebar()">☰</span>
-    <span>WPTOPUP 💎</span>
-    <span id="saldoDisplay">Rp 0</span>
-</header>
-
-<div id="sidebar" class="sidebar">
-    <span class="close-btn" onclick="closeSidebar()">×</span>
-    <a href="#" onclick="showHome()">🏠 Home</a>
-    <a href="#" onclick="showCategories()">🎮 Top Up</a>
-    <a href="#" onclick="showLogin()">🔑 Login / Deposit</a>
-</div>
-
-<main id="content"></main>
-
-<footer>
-    © 2025 WPTOPUP | IB : WAHYU PROJECT
-</footer>
-
-<script>
-let saldo = 0;
-let loggedInUser = null;
-let selectedGame = null;
-let selectedItem = null;
-let selectedPrice = 0;
-let selectedUserId = "";
-
-const categories = {
-    "Mobile Games": ["Mobile Legends", "Free Fire", "PUBG Mobile", "COD Mobile", "Genshin Impact", "Higgs Domino"],
-    "PC Games": ["Valorant", "Point Blank", "Apex Legends", "League of Legends"],
-    "Vouchers": ["Roblox", "Google Play", "Steam Wallet", "Garena Voucher"]
-};
-
-// FULL NOMINAL PASARAN
-const gameNominals = {
-    "Mobile Legends": [
-        ["5 Diamond",1500],["12 Diamond",3500],["19 Diamond",5000],["28 Diamond",6500],["36 Diamond",8500],["44 Diamond",10500],
-        ["59 Diamond",13500],["86 Diamond",20000],["172 Diamond",40000],["257 Diamond",60000],["344 Diamond",80000],
-        ["429 Diamond",100000],["514 Diamond",120000],["706 Diamond",160000],["878 Diamond",200000],["1050 Diamond",240000],
-        ["1412 Diamond",320000],["2195 Diamond",500000]
-    ],
-    "Free Fire": [
-        ["5 Diamond",1500],["12 Diamond",3500],["50 Diamond",8000],["70 Diamond",10000],["100 Diamond",14000],["140 Diamond",20000],
-        ["355 Diamond",50000],["720 Diamond",100000],["1450 Diamond",200000],["2180 Diamond",300000],["3640 Diamond",500000]
-    ],
-    "PUBG Mobile": [
-        ["60 UC",15000],["120 UC",30000],["325 UC",75000],["660 UC",150000],["1800 UC",400000],["3850 UC",800000],["8100 UC",1600000]
-    ],
-    "COD Mobile": [
-        ["80 CP",15000],["420 CP",75000],["880 CP",150000],["2400 CP",400000],["5000 CP",800000]
-    ],
-    "Genshin Impact": [
-        ["60 GC",15000],["300+30 GC",75000],["980+110 GC",250000],["1980+260 GC",500000],["3280+600 GC",800000],["6480+1600 GC",1600000]
-    ],
-    "Higgs Domino": [
-        ["30M Koin",10000],["60M Koin",20000],["100M Koin",30000],["200M Koin",60000],["400M Koin",120000]
-    ],
-    "Valorant": [
-        ["125 VP",15000],["420 VP",50000],["700 VP",80000],["1375 VP",150000],["2400 VP",250000],["4000 VP",400000]
-    ],
-    "Point Blank": [
-        ["1200 Cash",10000],["2400 Cash",20000],["6000 Cash",50000],["12000 Cash",100000]
-    ],
-    "Apex Legends": [
-        ["435 Coins",50000],["1000 Coins",100000],["2150 Coins",200000],["4350 Coins",400000]
-    ],
-    "League of Legends": [
-        ["225 RP",20000],["650 RP",50000],["1380 RP",100000],["2800 RP",200000]
-    ],
-    "Roblox": [
-        ["80 Robux",15000],["400 Robux",75000],["800 Robux",150000],["1700 Robux",300000],["4500 Robux",800000]
-    ],
-    "Google Play": [
-        ["IDR 50.000",50000],["IDR 100.000",100000],["IDR 150.000",150000],["IDR 300.000",300000],["IDR 500.000",500000]
-    ],
-    "Steam Wallet": [
-        ["IDR 60.000",60000],["IDR 120.000",120000],["IDR 250.000",250000],["IDR 400.000",400000],["IDR 600.000",600000]
-    ],
-    "Garena Voucher": [
-        ["50 Shell",10000],["100 Shell",20000],["300 Shell",50000],["500 Shell",80000]
-    ]
-};
-
-function openSidebar(){document.getElementById("sidebar").classList.add("open");}
-function closeSidebar(){document.getElementById("sidebar").classList.remove("open");}
-function updateSaldo(){document.getElementById("saldoDisplay").textContent = loggedInUser ? `${loggedInUser} | Rp ${saldo.toLocaleString()}` : `Rp ${saldo.toLocaleString()}`;}
-
-function showHome(){
-    document.getElementById("content").innerHTML = `
-        <h2>Selamat Datang di WPTOPUP 💎</h2>
-        <button class="btn" onclick="showCategories()">Mulai Top Up</button>
-        <button class="btn" onclick="showLogin()">Login untuk Deposit</button>
-    `;
-    closeSidebar();
-}
-
-function showCategories(){
-    let html = `<h2>Pilih Kategori</h2><div class="category-list">`;
-    for(let cat in categories){
-        html += `<div class="item" onclick="showGames('${cat}')">${cat}</div>`;
-    }
-    html += `</div>`;
-    document.getElementById("content").innerHTML = html;
-    closeSidebar();
-}
-
-function showGames(cat){
-    let html = `<h2>${cat}</h2><div class="game-list">`;
-    categories[cat].forEach(g => {
-        html += `<div class="item" onclick="showNominals('${g}')">${g}</div>`;
-    });
-    html += `</div><button class="btn" onclick="showCategories()">⬅ Kembali</button>`;
-    document.getElementById("content").innerHTML = html;
-}
-
-function showNominals(game){
-    selectedGame = game;
-    let html = `<h2>${game}</h2><input id="userId" placeholder="Masukkan ID / Username"><div class="nominal-list">`;
-    gameNominals[game].forEach(([item,price])=>{
-        html += `<div class="item" onclick="chooseNominal('${item}',${price})">${item}<br>Rp ${price.toLocaleString()}</div>`;
-    });
-    html += `</div><button class="btn" onclick="showGames(findCategory('${game}'))">⬅ Kembali</button>`;
-    document.getElementById("content").innerHTML = html;
-}
-
-function findCategory(game){
-    for(let cat in categories){
-        if(categories[cat].includes(game)) return cat;
-    }
-}
-
-function chooseNominal(item,price){
-    selectedItem = item;
-    selectedPrice = price;
-    selectedUserId = document.getElementById("userId").value;
-    if(!selectedUserId){alert("Masukkan ID / Username terlebih dahulu!");return;}
-    showPayments();
-}
-
-function showPayments(){
-    let html = `<h2>Pilih Metode Pembayaran</h2>
-        <p>Game: ${selectedGame}</p>
-        <p>Item: ${selectedItem}</p>
-        <p>Harga: Rp ${selectedPrice.toLocaleString()}</p>
-        <div class="payment-list">
-            <div class="item" onclick="payWithSaldo()">💰 Saldo</div>
-            <div class="item" onclick="payWithWA()">📱 WhatsApp</div>
-            <div class="item" onclick="payWithATM()">🏦 ATM</div>
-            <div class="item" onclick="payWithQR()">🔳 QRIS</div>
-            <div class="item" onclick="payWithEwallet()">📲 E-Wallet</div>
-        </div>
-        <button class="btn" onclick="showNominals('${selectedGame}')">⬅ Kembali</button>
-    `;
-    document.getElementById("content").innerHTML = html;
-}
-
-function payWithSaldo(){
-    if(!loggedInUser){alert("Login untuk membayar dengan saldo!");return;}
-    if(saldo >= selectedPrice){
-        saldo -= selectedPrice;
-        updateSaldo();
-        alert(`✅ Top Up ${selectedGame} ${selectedItem} sukses via saldo!`);
-        showHome();
-    } else {
-        alert("❌ Saldo tidak cukup!");
-    }
-}
-function payWithWA(){
-    let pesan = `Top Up ${selectedGame} ${selectedItem}%0AID: ${selectedUserId}%0AHarga: Rp ${selectedPrice.toLocaleString()}`;
-    window.open(`https://wa.me/087778913867?text=${pesan}`,"_blank");
-}
-function payWithATM(){alert(`🏦 Transfer ke BCA 4804 0107 5671 539 a.n WPTOPUP\nJumlah: Rp ${selectedPrice.toLocaleString()}`);}
-function payWithQR(){alert(`🔳 minta QRIS ke whatsapp kami untuk membayar Rp ${selectedPrice.toLocaleString()}`);}
-function payWithEwallet(){alert(`📲 Transfer ke Dana/Gopay 085210567509 abis itu bukti ke whatsapp \nJumlah: Rp ${selectedPrice.toLocaleString()}`);}
-
-function showLogin(){
-    document.getElementById("content").innerHTML = `
-        <h2>Login</h2>
-        <input id="username" placeholder="Username">
-        <input id="password" type="password" placeholder="Password">
-        <button class="btn" onclick="login()">Login</button>
-    `;
-}
-
-function login(){
-    let u = document.getElementById("username").value;
-    let p = document.getElementById("password").value;
-    if(u && p){
-        loggedInUser = u;
-        saldo = 50000;
-        updateSaldo();
-        showHome();
-    } else {
-        alert("Isi username dan password!");
-    }
-}
-
-updateSaldo();
-showHome();
-</script>
-
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col">
+        <!-- Navigation -->
+        <nav class="bg-indigo-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="neon-effect rounded-full w-10 h-10 bg-white flex items-center justify-center">
+                        <span class="text-indigo-600 font-bold text-xl">WP</span>
+                    </div>
+                    <h1 class="text-2xl font-bold">WPShop</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div id="balance-display" class="bg-indigo-700 px-4 py-2 rounded-full hidden">
+                        <span class="font-medium">Rp</span>
+                        <span id="balance-amount" class="font-bold">0</span>
+                    </div>
+                    
+                    <div id="auth-buttons">
+                        <button onclick="showPage('login')" class="bg-white text-indigo-600 px-4 py-2 rounded-full font-medium hover:bg-gray-100">Login</button>
+                        <button onclick="showPage('register')" class="border border-white text-white px-4 py-2 rounded-full font-medium hover:bg-white hover:text-indigo-600 ml-2">Register</button>
+                    </div>
+                    
+                    <div id="user-menu" class="hidden">
+                        <button id="username-display" class="bg-white text-indigo-600 px-4 py-2 rounded-full font-medium hover:bg-gray-100"></button>
+                        <button onclick="logout()" class="border border-white text-white px-4 py-2 rounded-full font-medium hover:bg-white hover:text-indigo-600 ml-2">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content (Pages will be shown here) -->
+        <main class="flex-1 container mx-auto px-4 py-8">
+            <!-- Hero Section -->
+            <div id="hero" class="page active">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white mb-8">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Top Up Game Termurah di WPShop</h1>
+                    <p class="text-xl mb-6">Isi diamond, voucher, dan item game favoritmu dengan harga terbaik!</p>
+                    <button onclick="checkAuthAndShowGames()" class="bg-white text-indigo-600 px-6 py-3 rounded-full font-bold text-lg hover:bg-gray-100 transform hover:scale-105 transition-transform">
+                        Mulai Beli Sekarang
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="text-indigo-600 text-3xl mb-3">⚡</div>
+                        <h3 class="font-bold text-xl mb-2">Proses Cepat</h3>
+                        <p class="text-gray-600">Pesanan diproses dalam waktu kurang dari 5 menit setelah pembayaran</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="text-indigo-600 text-3xl mb-3">🔒</div>
+                        <h3 class="font-bold text-xl mb-2">Aman & Terpercaya</h3>
+                        <p class="text-gray-600">Lebih dari 100.000 transaksi berhasil dengan aman</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="text-indigo-600 text-3xl mb-3">💰</div>
+                        <h3 class="font-bold text-xl mb-2">Harga Termurah</h3>
+                        <p class="text-gray-600">Garansi harga termurah dengan banyak bonus dan promo</p>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl font-bold mb-6">Game Populer</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="checkAuthAndShowDiamonds('Mobile Legends')">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fbba6cc1-7346-4dc0-a28b-4e869256e5bc.png" alt="Mobile Legends game logo with blue background and character artwork" class="w-full h-32 object-cover">
+                            <div class="p-3">
+                                <h3 class="font-semibold">Mobile Legends</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="checkAuthAndShowDiamonds('Free Fire')">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2190a15e-d8a1-480e-80ba-8bc3d9f0c551.png" alt="Free Fire game logo with orange background and action scene" class="w-full h-32 object-cover">
+                            <div class="p-3">
+                                <h3 class="font-semibold">Free Fire</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="checkAuthAndShowDiamonds('PUBG Mobile')">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/986c57fa-c571-45ed-b145-7ac49eb9092b.png" alt="PUBG Mobile game logo with green background and battle royale scene" class="w-full h-32 object-cover">
+                            <div class="p-3">
+                                <h3 class="font-semibold">PUBG Mobile</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="checkAuthAndShowDiamonds('Valorant')">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d30eb823-72d4-48ea-aa8b-ce5bd99b832c.png" alt="Valorant game logo with red background and character artwork" class="w-full h-32 object-cover">
+                            <div class="p-3">
+                                <h3 class="font-semibold">Valorant</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Page -->
+            <div id="login" class="page max-w-md mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-indigo-600">Login ke WPShop</h2>
+                    
+                    <form id="login-form" onsubmit="event.preventDefault(); login()">
+                        <div class="mb-4">
+                            <label for="login-email" class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="login-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="login-password" class="block text-gray-700 mb-2">Password</label>
+                            <input type="password" id="login-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 mb-4">Login</button>
+                        
+                        <p class="text-center text-gray-600">
+                            Belum punya akun? 
+                            <button onclick="showPage('register')" class="text-indigo-600 font-medium">Daftar sekarang</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Register Page -->
+            <div id="register" class="page max-w-md mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-indigo-600">Daftar WPShop</h2>
+                    
+                    <form id="register-form" onsubmit="event.preventDefault(); register()">
+                        <div class="mb-4">
+                            <label for="register-name" class="block text-gray-700 mb-2">Nama Lengkap</label>
+                            <input type="text" id="register-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="register-email" class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="register-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-gray-700 mb-2">Password</label>
+                            <input type="password" id="register-password" required minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="register-confirm-password" class="block text-gray-700 mb-2">Konfirmasi Password</label>
+                            <input type="password" id="register-confirm-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 mb-4">Daftar</button>
+                        
+                        <p class="text-center text-gray-600">
+                            Sudah punya akun? 
+                            <button onclick="showPage('login')" class="text-indigo-600 font-medium">Login disini</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Game Selection Page -->
+            <div id="games" class="page">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold">Pilih Game</h2>
+                    <button onclick="showPage('hero')" class="text-indigo-600 font-medium hover:underline">Kembali</button>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Mobile Legends')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e0e59f44-be09-4343-a49e-e61182389aea.png" alt="Mobile Legends game logo with blue background and character artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Mobile Legends</h3>
+                            <p class="text-sm text-gray-600">Diamond, Skin, Starlight</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Free Fire')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/af329ab2-cb22-4ea0-bdc7-536db4921f3d.png" alt="Free Fire game logo with orange background and action scene" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Free Fire</h3>
+                            <p class="text-sm text-gray-600">Diamond, Character, Elite Pass</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('PUBG Mobile')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7ebde1fc-268a-4aa7-bd3e-ec64e9e99ee6.png" alt="PUBG Mobile game logo with green background and battle royale scene" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">PUBG Mobile</h3>
+                            <p class="text-sm text-gray-600">UC, Skins, Royale Pass</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Valorant')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3ac9b043-da68-46ab-918c-361f146884f7.png" alt="Valorant game logo with red background and character artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Valorant</h3>
+                            <p class="text-sm text-gray-600">VP, Weapon Skins, Battlepass</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Genshin Impact')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0b5c68e8-a8d8-4c79-ac05-14c3e23ae577.png" alt="Genshin Impact game logo with blue background and anime artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Genshin Impact</h3>
+                            <p class="text-sm text-gray-600">Genesis Crystals, Welkin Moon</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Call of Duty Mobile')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/45c09866-51df-4b17-920c-7232ee84dc2b.png" alt="Call of Duty Mobile game logo with black background and soldier artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">COD Mobile</h3>
+                            <p class="text-sm text-gray-600">CP, Battle Pass, Skins</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('League of Legends: Wild Rift')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c726668b-a864-430d-9f8f-71979092a3f0.png" alt="League of Legends Wild Rift game logo with dark blue background and champion artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">LoL: Wild Rift</h3>
+                            <p class="text-sm text-gray-600">Wild Cores, Skins</p>
+                        </div>
+                    </div>
+                    <div class="game-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg" onclick="showDiamonds('Apex Legends Mobile')">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d6890f77-c2d3-4797-862e-4c339b261aec.png" alt="Apex Legends Mobile game logo with red background and character artwork" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h3 class="font-semibold">Apex Legends</h3>
+                            <p class="text-sm text-gray-600">Apex Coins, Battle Pass</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Diamond Selection Page -->
+            <div id="diamonds" class="page">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <button onclick="showPage('games')" class="text-indigo-600 font-medium hover:underline mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Kembali ke Game
+                        </button>
+                        <h2 id="diamond-game-title" class="text-2xl font-bold"></h2>
+                    </div>
+                    <div class="text-gray-500">
+                        Saldo: <span class="font-bold text-indigo-600">Rp<span id="balance-before-purchase">0</span></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Diamond cards will be injected here by JavaScript -->
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                    <h3 class="font-bold text-lg mb-4">Cara Pembelian</h3>
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>Pilih jumlah diamond yang ingin dibeli</li>
+                        <li>Masukkan ID game dan ID server (jika ada)</li>
+                        <li>Pilih metode pembayaran</li>
+                        <li>Lakukan pembayaran</li>
+                        <li>Diamond akan dikirim dalam waktu maksimal 5 menit</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Payment Page -->
+            <div id="payment" class="page max-w-2xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <button onclick="showPage('diamonds')" class="text-indigo-600 font-medium hover:underline mb-2 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Kembali
+                            </button>
+                            <h2 class="text-2xl font-bold">Beli Diamond</h2>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-500">Total Bayar</p>
+                            <p class="text-2xl font-bold text-indigo-600">Rp<span id="payment-amount">0</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-semibold mb-3">Detail Pesanan</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Game</span>
+                                <span class="font-medium" id="payment-game"></span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">Item</span>
+                                <span class="font-medium" id="payment-item"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Harga</span>
+                                <span class="font-medium" id="payment-price"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="player-info-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <label for="player-id" class="block text-gray-700 mb-2">ID Game</label>
+                                <input type="text" id="player-id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label for="server-id" class="block text-gray-700 mb-2">ID Server (Opsional)</label>
+                                <input type="text" id="server-id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="mb-8">
+                        <h3 class="font-semibold mb-3">Pilih Metode Pembayaran</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="payment-method" onclick="selectPaymentMethod('OVO')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c29c20d2-bcdb-400f-ac15-4893b99479fb.png" alt="OVO payment logo purple gradient with white text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">OVO</p>
+                                </div>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('DANA')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b83ed61f-2011-4b8e-8837-d7903b749bb2.png" alt="DANA payment logo with teal gradient and black text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">DANA</p>
+                                </div>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('Gopay')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d2669b57-e63a-432a-aab6-4333ce30e0fd.png" alt="Gopay payment logo with green background and white text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">Gopay</p>
+                                </div>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('ShopeePay')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e28484b2-d38c-4cd5-af1f-15ac48f45947.png" alt="ShopeePay payment logo with orange background and white text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">ShopeePay</p>
+                                </div>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('Bank Transfer')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f2bcd0d8-9067-45e4-bbf0-6c651668060e.png" alt="Generic bank transfer icon with blue background and white text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">Bank Transfer</p>
+                                </div>
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('Alfamart')">
+                                <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/dee7db7d-219b-46e5-92e4-32eb62174aa7.png" alt="Alfamart logo with red background and white text" class="h-8 mx-auto mb-2">
+                                    <p class="text-center text-sm">Alfamart</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-8 hidden" id="payment-instruction">
+                        <h4 class="font-semibold mb-2" id="payment-method-name"></h4>
+                        <p class="text-sm mb-4" id="payment-method-desc"></p>
+                        <ol class="list-decimal list-inside text-sm space-y-1" id="payment-steps"></ol>
+                    </div>
+                    
+                    <button onclick="processPayment()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">Bayar Sekarang</button>
+                </div>
+            </div>
+            
+            <!-- Payment Success Page -->
+            <div id="payment-success" class="page max-w-md mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">Pembayaran Berhasil!</h2>
+                    <p class="text-gray-600 mb-6">Terima kasih telah berbelanja di WPShop</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6 text-left">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Order ID</span>
+                            <span class="font-medium" id="success-order-id"></span>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Game</span>
+                            <span class="font-medium" id="success-game"></span>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Item</span>
+                            <span class="font-medium" id="success-item"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Bayar</span>
+                            <span class="font-medium" id="success-amount"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                        <h4 class="font-semibold text-blue-700 mb-1">Status: <span id="success-status">Dalam Proses</span></h4>
+                        <p class="text-blue-600 text-sm">Diamond akan dikirim ke akun game Anda dalam waktu maksimal 5 menit.</p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button onclick="showPage('hero')" class="flex-1 border border-indigo-600 text-indigo-600 py-2 rounded-lg font-medium hover:bg-indigo-50">Kembali ke Beranda</button>
+                        <button onclick="checkAuthAndShowGames()" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700">Beli Lagi</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-white rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                                <span class="text-indigo-600 font-bold">WP</span>
+                            </div>
+                            <h2 class="text-xl font-bold">WPShop</h2>
+                        </div>
+                        <p class="text-gray-400">Top up game termurah dengan proses cepat dan aman.</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="font-semibold mb-3">Layanan</h3>
+                            <ul class="space-y-2">
+                                <li><a href="#" class="text-gray-400 hover:text-white">Mobile Legends</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Free Fire</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">PUBG Mobile</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Valorant</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-3">Perusahaan</h3>
+                            <ul class="space-y-2">
+                                <li><a href="#" class="text-gray-400 hover:text-white">Tentang Kami</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Kebijakan Privasi</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Syarat & Ketentuan</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Kontak</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-3">Bantuan</h3>
+                            <ul class="space-y-2">
+                                <li><a href="#" class="text-gray-400 hover:text-white">Cara Pembelian</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Pertanyaan Umum</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Status Pesanan</a></li>
+                                <li><a href="#" class="text-gray-400 hover:text-white">Layanan Pelanggan</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                    <p>© 2023 WPShop. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // State management
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        const users = JSON.parse(localStorage.getItem('users')) || [
+            { id: 1, name: 'Admin', email: 'admin@wpshop.com', password: 'admin123', balance: 1000000 }
+        ];
+        
+        let selectedGame = '';
+        let selectedDiamond = { name: '', price: 0 };
+        let selectedPaymentMethod = '';
+        
+        // Game and diamond data
+        const gameItems = {
+            'Mobile Legends': [
+                { name: '5 Diamond', price: 2000 },
+                { name: '11 Diamond', price: 4000 },
+                { name: '17 Diamond', price: 6000 },
+                { name: '53 Diamond', price: 15000 },
+                { name: '108 Diamond', price: 30000 },
+                { name: '217 Diamond', price: 60000 },
+                { name: '373 Diamond', price: 100000 },
+                { name: '568 Diamond', price: 150000 },
+                { name: '878 Diamond', price: 200000 }
+            ],
+            'Free Fire': [
+                { name: '5 Diamond', price: 1000 },
+                { name: '12 Diamond', price: 2000 },
+                { name: '50 Diamond', price: 5000 },
+                { name: '125 Diamond', price: 10000 },
+                { name: '250 Diamond', price: 20000 },
+                { name: '500 Diamond', price: 40000 },
+                { name: '1000 Diamond', price: 80000 },
+                { name: '2000 Diamond', price: 160000 },
+                { name: '4000 Diamond', price: 300000 }
+            ],
+            'PUBG Mobile': [
+                { name: '50 UC', price: 10000 },
+                { name: '125 UC', price: 20000 },
+                { name: '250 UC', price: 40000 },
+                { name: '500 UC', price: 80000 },
+                { name: '1000 UC', price: 150000 },
+                { name: '2000 UC', price: 300000 },
+                { name: '5000 UC', price: 500000 },
+                { name: '10000 UC', price: 1000000 }
+            ],
+            'Valorant': [
+                { name: '125 VP', price: 20000 },
+                { name: '315 VP', price: 40000 },
+                { name: '600 VP', price: 80000 },
+                { name: '1125 VP', price: 150000 },
+                { name: '2450 VP', price: 300000 },
+                { name: '5000 VP', price: 500000 },
+                { name: '10000 VP', price: 1000000 }
+            ]
+        };
+        
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Special cases
+            if (pageId === 'diamonds' && selectedGame) {
+                loadDiamonds(selectedGame);
+            }
+            
+            // Animation
+            gsap.from(`#${pageId}`, { 
+                duration: 0.5, 
+                opacity: 0, 
+                y: 20,
+                ease: "power2.out" 
+            });
+        }
+        
+        // Load diamonds based on selected game
+        function loadDiamonds(game) {
+            selectedGame = game;
+            document.getElementById('diamond-game-title').textContent = game;
+            
+            const diamondsContainer = document.querySelector('#diamonds .grid');
+            diamondsContainer.innerHTML = '';
+            
+            const diamonds = gameItems[game] || [];
+            
+            diamonds.forEach(diamond => {
+                const diamondCard = document.createElement('div');
+                diamondCard.className = 'diamond-card bg-white rounded-xl shadow-md cursor-pointer';
+                diamondCard.innerHTML = `
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${diamond.name}</h3>
+                        <p class="text-2xl font-bold text-indigo-600 mb-4">Rp${diamond.price.toLocaleString()}</p>
+                        <button onclick="selectDiamond('${game}', '${diamond.name}', ${diamond.price})" 
+                            class="w-full bg-indigo-100 text-indigo-600 py-2 rounded-lg font-medium hover:bg-indigo-200">
+                            Beli Sekarang
+                        </button>
+                    </div>
+                `;
+                
+                diamondsContainer.appendChild(diamondCard);
+                
+                // Animation for each diamond card
+                gsap.from(diamondCard, {
+                    duration: 0.3,
+                    opacity: 0,
+                    y: 20,
+                    delay: Math.random() * 0.2
+                });
+            });
+            
+            // Update balance display
+            if (currentUser) {
+                document.getElementById('balance-before-purchase').textContent = currentUser.balance.toLocaleString();
+            }
+        }
+        
+        // Check auth before showing games
+        function checkAuthAndShowGames() {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+            showPage('games');
+        }
+        
+        // Check auth before showing diamonds
+        function checkAuthAndShowDiamonds(game) {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+            showDiamonds(game);
+        }
+        
+        // Show diamonds page for specific game
+        function showDiamonds(game) {
+            selectedGame = game;
+            showPage('diamonds');
+        }
+        
+        // Diamond selection
+        function selectDiamond(game, name, price) {
+            selectedDiamond = { name, price };
+            
+            // Update payment page
+            document.getElementById('payment-game').textContent = game;
+            document.getElementById('payment-item').textContent = name;
+            document.getElementById('payment-price').textContent = `Rp${price.toLocaleString()}`;
+            document.getElementById('payment-amount').textContent = price.toLocaleString();
+            
+            showPage('payment');
+            
+            // Show confirmation animation
+            const btn = document.querySelector('#payment button');
+            gsap.to(btn, {
+                duration: 0.5,
+                scale: 1.05,
+                yoyo: true,
+                repeat: 1,
+                ease: "power1.inOut"
+            });
+        }
+        
+        // Payment method selection
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Highlight selected method
+            document.querySelectorAll('.payment-method div').forEach(el => {
+                el.classList.remove('border-indigo-500', 'bg-indigo-50');
+                el.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.querySelector('div').classList.remove('border-gray-200');
+            event.currentTarget.querySelector('div').classList.add('border-indigo-500', 'bg-indigo-50');
+            
+            // Show payment instructions
+            const instruction = document.getElementById('payment-instruction');
+            const methodName = document.getElementById('payment-method-name');
+            const methodDesc = document.getElementById('payment-method-desc');
+            const steps = document.getElementById('payment-steps');
+            
+            instruction.classList.remove('hidden');
+            
+            methodName.textContent = `Instruksi Pembayaran ${method}`;
+            
+            if (method === 'OVO' || method === 'DANA' || method === 'Gopay' || method === 'ShopeePay') {
+                methodDesc.textContent = `Lakukan pembayaran menggunakan ${method} dengan mengikuti langkah berikut:`;
+                
+                steps.innerHTML = `
+                    <li>Buka aplikasi ${method} di perangkat Anda</li>
+                    <li>Masuk ke menu Transfer/Pembayaran</li>
+                    <li>Masukkan nomor tujuan pembayaran 0857-1234-5678</li>
+                    <li>Masukkan nominal Rp${selectedDiamond.price.toLocaleString()}</li>
+                    <li>Tambahkan keterangan "Topup ${selectedGame}"</li>
+                    <li>Konfirmasi pembayaran</li>
+                `;
+            } else if (method === 'Bank Transfer') {
+                methodDesc.textContent = 'Lakukan transfer melalui ATM, Internet Banking, atau Mobile Banking dengan mengikuti langkah berikut:';
+                
+                steps.innerHTML = `
+                    <li>Masuk ke menu Transfer</li>
+                    <li>Masukkan kode bank BCA (014) atau bank lain yang tersedia</li>
+                    <li>Masukkan nomor rekening 1234567890 a.n. WPShop</li>
+                    <li>Masukkan nominal Rp${selectedDiamond.price.toLocaleString()}</li>
+                    <li>Tambahkan keterangan "Topup ${selectedGame}"</li>
+                    <li>Konfirmasi pembayaran</li>
+                `;
+            } else if (method === 'Alfamart') {
+                methodDesc.textContent = 'Lakukan pembayaran di kasir Alfamart terdekat dengan mengikuti langkah berikut:';
+                
+                steps.innerHTML = `
+                    <li>Beritahu kasir ingin melakukan pembayaran "WPShop"</li>
+                    <li>Sebutkan kode pembayaran yang muncul setelah Anda klik Bayar Sekarang</li>
+                    <li>Tunjukkan atau ingat nominal pembayaran Rp${selectedDiamond.price.toLocaleString()}</li>
+                    <li>Bayar ke kasir sesuai nominal</li>
+                    <li>Simpan struk pembayaran sebagai bukti</li>
+                `;
+            }
+        }
+        
+        // Process payment
+        function processPayment() {
+            if (!selectedPaymentMethod) {
+                alert('Pilih metode pembayaran terlebih dahulu');
+                return;
+            }
+            
+            const playerId = document.getElementById('player-id').value;
+            if (!playerId) {
+                alert('Masukkan ID Game terlebih dahulu');
+                return;
+            }
+            
+            // Deduct balance if using wallet (for demo)
+            if (currentUser && selectedPaymentMethod === 'Saldo WPShop') {
+                if (currentUser.balance < selectedDiamond.price) {
+                    alert('Saldo tidak cukup');
+                    return;
+                }
+                currentUser.balance -= selectedDiamond.price;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserUI();
+            }
+            
+            // Show success page
+            showPaymentSuccess();
+        }
+        
+        // Show payment success page
+        function showPaymentSuccess() {
+            // Generate random order ID
+            const orderId = 'WP-' + Math.floor(100000 + Math.random() * 900000);
+            
+            document.getElementById('success-order-id').textContent = orderId;
+            document.getElementById('success-game').textContent = selectedGame;
+            document.getElementById('success-item').textContent = selectedDiamond.name;
+            document.getElementById('success-amount').textContent = `Rp${selectedDiamond.price.toLocaleString()}`;
+            
+            showPage('payment-success');
+            
+            // Confetti animation
+            const btn = document.querySelector('#payment-success button:nth-child(3)');
+            btn.classList.add('btn-confetti');
+            
+            // Animate success icon
+            const checkIcon = document.querySelector('#payment-success svg');
+            gsap.to(checkIcon, {
+                duration: 0.6,
+                scale: 1.2,
+                yoyo: true,
+                repeat: 1,
+                ease: "elastic.out(1, 0.5)"
+            });
+            
+            // After 3 seconds, update status
+            setTimeout(() => {
+                document.getElementById('success-status').textContent = 'Selesai';
+                document.getElementById('success-status').classList.add('text-green-600');
+                document.querySelector('#payment-success .bg-blue-50').classList.remove('bg-blue-50');
+                document.querySelector('#payment-success .bg-blue-50').classList.add('bg-green-50');
+                document.querySelector('#payment-success .text-blue-600').classList.remove('text-blue-600');
+                document.querySelector('#payment-success .text-blue-600').classList.add('text-green-600');
+            }, 3000);
+        }
+        
+        // User authentication
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                updateUserUI();
+                
+                // Animation
+                const form = document.getElementById('login-form');
+                gsap.to(form, {
+                    duration: 0.3,
+                    opacity: 0,
+                    y: -20,
+                    onComplete: () => showPage('hero')
+                });
+                
+                // Show welcome animation
+                setTimeout(() => {
+                    const welcome = document.createElement('div');
+                    welcome.className = 'fixed top-20 right-4 bg-white text-indigo-600 px-4 py-2 rounded-lg shadow-lg z-50';
+                    welcome.textContent = `Selamat datang, ${user.name}!`;
+                    document.body.appendChild(welcome);
+                    
+                    gsap.from(welcome, { y: -50, opacity: 0, duration: 0.5 });
+                    gsap.to(welcome, { y: 0, opacity: 1, duration: 0.5, delay: 2, onComplete: () => welcome.remove() });
+                }, 500);
+            } else {
+                alert('Email atau password salah');
+                
+                // Shake animation for wrong credentials
+                const form = document.getElementById('login-form');
+                gsap.to(form, {
+                    duration: 0.1,
+                    x: -10,
+                    repeat: 5,
+                    yoyo: true,
+                    ease: "power1.inOut"
+                });
+            }
+        }
+        
+        function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            // Validate
+            if (password !== confirmPassword) {
+                alert('Password tidak cocok');
+                
+                // Highlight error
+                const confirmField = document.getElementById('register-confirm-password');
+                gsap.to(confirmField, {
+                    duration: 0.1,
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    repeat: 3,
+                    yoyo: true
+                });
+                return;
+            }
+            
+            // Check if email exists
+            if (users.some(u => u.email === email)) {
+                alert('Email sudah terdaftar');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: users.length + 1,
+                name,
+                email,
+                password,
+                balance: 100000 // Give bonus for registration
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            updateUserUI();
+            
+            // Animation
+            const form = document.getElementById('register-form');
+            gsap.to(form, {
+                duration: 0.3,
+                opacity: 0,
+                y: -20,
+                onComplete: () => showPage('hero')
+            });
+            
+            // Show welcome animation
+            setTimeout(() => {
+                const welcome = document.createElement('div');
+                welcome.className = 'fixed top-20 right-4 bg-white text-indigo-600 px-4 py-2 rounded-lg shadow-lg z-50';
+                welcome.textContent = `Selamat bergabung, ${name}!`;
+                document.body.appendChild(welcome);
+                
+                gsap.from(welcome, { y: -50, opacity: 0, duration: 0.5 });
+                gsap.to(welcome, { y: 0, opacity: 1, duration: 0.5, delay: 2, onComplete: () => welcome.remove() });
+            }, 500);
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUserUI();
+            showPage('hero');
+            
+            // Show logout animation
+            const logoutMsg = document.createElement('div');
+            logoutMsg.className = 'fixed top-20 right-4 bg-white text-indigo-600 px-4 py-2 rounded-lg shadow-lg z-50';
+            logoutMsg.textContent = 'Anda telah logout';
+            document.body.appendChild(logoutMsg);
+            
+            gsap.from(logoutMsg, { y: -50, opacity: 0, duration: 0.5 });
+            gsap.to(logoutMsg, { y: 0, opacity: 1, duration: 0.5, delay: 2, onComplete: () => logoutMsg.remove() });
+        }
+        
+        // Update UI based on auth state
+        function updateUserUI() {
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            const balanceDisplay = document.getElementById('balance-display');
+            
+            if (currentUser) {
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                balanceDisplay.classList.remove('hidden');
+                
+                document.getElementById('username-display').textContent = currentUser.name;
+                document.getElementById('balance-amount').textContent = currentUser.balance.toLocaleString();
+            } else {
+                authButtons.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+                balanceDisplay.classList.add('hidden');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUserUI();
+            
+            if (!currentUser) {
+                showPage('hero');
+            }
+            
+            // Add animation to hero buttons
+            gsap.from("#hero button, #hero .game-card, #hero .grid > div", {
+                duration: 0.5,
+                opacity: 0,
+                y: 20,
+                stagger: 0.1,
+                delay: 0.3
+            });
+        });
+    </script>
 </body>
 </html>
+
