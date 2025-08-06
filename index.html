@@ -1,79 +1,674 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WPShop - Top Up Game Termurah</title>
+    <title>WpShop - Top Up Game Termurah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px #4f46e5; }
+            50% { box-shadow: 0 0 20px #4f46e5, 0 0 30px #6366f1; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
         
-        * {
+        .floating { animation: float 4s ease-in-out infinite; }
+        .glowing { animation: glow 2s ease-in-out infinite; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        .slide-in { animation: slideIn 0.5s ease-out forwards; }
+        
+        body {
             font-family: 'Poppins', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .nav-item:hover {
+            color: #818cf8;
+            transform: translateY(-2px);
             transition: all 0.3s ease;
         }
-        
-        .page {
-            display: none;
+        .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #6366f1);
+            transition: all 0.3s ease;
         }
-        
-        .page.active {
-            display: block;
-            animation: fadeIn 0.5s forwards;
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .card {
+            transition: all 0.3s ease;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .neon-effect {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .neon-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(79, 70, 229, 0),
-                rgba(99, 102, 241, 0.5),
-                rgba(79, 70, 229, 0)
-            );
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-        
-        .game-card:hover {
+        .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #4f46e5;
         }
-        
-        .diamond-card {
-            position: relative;
-            overflow: hidden;
+        .login-form, .register-form {
+            opacity: 0;
+            transition: all 0.5s ease;
         }
-        
-        .diamond-card:hover {
-            transform: scale(1.03);
+        .active-form {
+            opacity: 1;
         }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header & Navbar -->
+    <header class="bg-gradient-to-r from-indigo-900 to-purple-900 border-b border-gray-800 sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xl floating">W</div>
+                <span class="text-xl font-bold text-white">WpShop</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class="nav-item">Home</a>
+                <a href="#" class="nav-item">Games</a>
+                <a href="#" class="nav-item">FAQ</a>
+                <a href="#" class="nav-item">Contact</a>
+                <button id="loginBtn" class="bg-transparent border border-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-500 transition duration-300">Login</button>
+            </div>
+            <button class="md:hidden text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-indigo-900/20 z-0"></div>
+        <div class="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center relative z-10">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 slide-in">Top Up Game <span class="text-indigo-400">Terpercaya</span></h1>
+                <p class="text-lg mb-8 text-gray-300 tracking-wide">Belanja Diamond, Voucher, dan Item Game dengan harga termurah dan proses instan di WpShop.</p>
+                <div class="flex space-x-4">
+                    <button id="registerBtn" class="btn-primary px-6 py-3 rounded-lg font-medium">Daftar Sekarang</button>
+                    <button class="bg-transparent border border-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-500/20 transition duration-300">Lihat Game</button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="relative floating">
+                    <div class="absolute -top-8 -left-8 w-32 h-32 bg-indigo-600 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
+                    <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
+                    <img src="https://placehold.co/600x400" alt="Ilustrasi karakter game dengan berbagai item dan diamond melayang-layang di sekitar karakter" class="relative w-full max-w-md rounded-xl border-2 border-indigo-400 shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-900 rounded-xl max-w-md w-full mx-4 p-8 relative">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="text-center mb-8">
+                <img src="https://placehold.co/100" alt="Logo WpShop dengan gradien biru ke ungu" class="mx-auto w-20 h-20 rounded-full glow mb-4">
+                <h2 class="text-2xl font-bold text-indigo-400">Welcome to WpShop</h2>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="login-form active-form">
+                <form>
+                    <div class="mb-4">
+                        <label for="loginEmail" class="block text-gray-300 mb-2">Email</label>
+                        <input type="email" id="loginEmail" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-6">
+                        <label for="loginPassword" class="block text-gray-300 mb-2">Password</label>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                    </div>
+                    <button type="button" id="submitLogin" class="btn-primary w-full py-3 rounded-lg font-medium mb-4">Login</button>
+                    <p class="text-center text-gray-400">Belum punya akun? <button id="switchToRegister" class="text-indigo-400 hover:underline">Daftar disini</button></p>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="login-form">
+                <form>
+                    <div class="mb-4">
+                        <label for="registerName" class="block text-gray-300 mb-2">Nama Lengkap</label>
+                        <input type="text" id="registerName" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="John Doe">
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerEmail" class="block text-gray-300 mb-2">Email</label>
+                        <input type="email" id="registerEmail" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="your@email.com">
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerPhone" class="block text-gray-300 mb-2">Nomor HP</label>
+                        <input type="tel" id="registerPhone" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="081234567890">
+                    </div>
+                    <div class="mb-6">
+                        <label for="registerPassword" class="block text-gray-300 mb-2">Password</label>
+                        <input type="password" id="registerPassword" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+                    </div>
+                    <button type="button" id="submitRegister" class="btn-primary w-full py-3 rounded-lg font-medium mb-4">Daftar</button>
+                    <p class="text-center text-gray-400">Sudah punya akun? <button id="switchToLogin" class="text-indigo-400 hover:underline">Login disini</button></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Games Section -->
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800" id="games">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2 slide-in">Pilih <span class="text-indigo-400">Game Favorit</span> Kamu</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Top up berbagai game populer dengan harga termurah dan proses instan.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Game 1 -->
+                <div class="card rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20">
+                    <div class="w-16 h-16 bg-indigo-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2">Mobile Legends</h3>
+                    <p class="text-gray-400 text-center mb-4">Top up Diamond MLBB</p>
+                    <button class="selectGame btn-primary w-full py-2 rounded-lg font-medium" data-game="Mobile Legends">Pilih</button>
+                </div>
+                
+                <!-- Game 2 -->
+                <div class="card rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20">
+                    <div class="w-16 h-16 bg-purple-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2">Free Fire</h3>
+                    <p class="text-gray-400 text-center mb-4">Top up Diamond FF</p>
+                    <button class="selectGame btn-primary w-full py-2 rounded-lg font-medium" data-game="Free Fire">Pilih</button>
+                </div>
+                
+                <!-- Game 3 -->
+                <div class="card rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20">
+                    <div class="w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2">PUBG Mobile</h3>
+                    <p class="text-gray-400 text-center mb-4">Top up UC PUBG</p>
+                    <button class="selectGame btn-primary w-full py-2 rounded-lg font-medium" data-game="PUBG Mobile">Pilih</button>
+                </div>
+                
+                <!-- Game 4 -->
+                <div class="card rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20">
+                    <div class="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-center mb-2">Genshin Impact</h3>
+                    <p class="text-gray-400 text-center mb-4">Top up Genesis Crystal</p>
+                    <button class="selectGame btn-primary w-full py-2 rounded-lg font-medium" data-game="Genshin Impact">Pilih</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diamond Selection Section (Hidden by Default) -->
+    <section id="diamondSection" class="py-16 bg-gray-800 hidden">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold" id="selectedGameTitle">Mobile Legends</h2>
+                    <p class="text-gray-400" id="selectedGameDesc">Pilih jumlah Diamond yang ingin dibeli</p>
+                </div>
+                <button id="backToGames" class="flex items-center text-indigo-400 hover:text-indigo-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Kembali
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Diamond Option 1 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">86 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">10% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">25.000</span> <span class="font-bold text-white">22.500</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="86" data-price="22500">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 2 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">172 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">12% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">50.000</span> <span class="font-bold text-white">44.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="172" data-price="44000">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 3 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">257 Diamond</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="font-bold text-white">75.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="257" data-price="75000">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 4 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">344 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">15% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">100.000</span> <span class="font-bold text-white">85.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="344" data-price="85000">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 5 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">429 Diamond</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="font-bold text-white">125.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="429" data-price="125000">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 6 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">514 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">5% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">150.000</span> <span class="font-bold text-white">142.500</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="514" data-price="142500">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 7 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">706 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">10% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">200.000</span> <span class="font-bold text-white">180.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="706" data-price="180000">Pilih</button>
+                </div>
+                
+                <!-- Diamond Option 8 -->
+                <div class="card rounded-xl p-6 hover:border-indigo-400 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">800 Diamond</h3>
+                        <div class="bg-indigo-600/20 text-indigo-300 px-3 py-1 rounded-full text-sm">20% OFF</div>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">IDR <span class="line-through text-gray-500">240.000</span> <span class="font-bold text-white">192.000</span></p>
+                    <button class="selectDiamond btn-primary w-full py-2 rounded-lg font-medium" data-diamond="800" data-price="192000">Pilih</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Section (Hidden by Default) -->
+    <section id="paymentSection" class="py-16 bg-gray-900 hidden">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold">Pembayaran</h2>
+                    <p class="text-gray-400">Lengkapi detail pembayaran Anda</p>
+                </div>
+                <button id="backToDiamond" class="flex items-center text-indigo-400 hover:text-indigo-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Kembali
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Order Summary -->
+                <div class="card rounded-xl p-6 lg:col-span-1">
+                    <h3 class="text-lg font-semibold mb-4">Ringkasan Pesanan</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Game:</span>
+                            <span class="font-medium" id="paymentGameTitle">Mobile Legends</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Item:</span>
+                            <span class="font-medium" id="paymentDiamondAmount">172 Diamond</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Harga:</span>
+                            <span class="font-medium" id="paymentDiamondPrice">Rp 44.000</span>
+                        </div>
+                        <div class="border-t border-gray-700 pt-4">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Total:</span>
+                                <span class="font-bold text-indigo-400" id="paymentTotalPrice">Rp 44.000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="card rounded-xl p-6 lg:col-span-2">
+                    <h3 class="text-lg font-semibold mb-4">Metode Pembayaran</h3>
+                    
+                    <!-- Payment Method Selection -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+                        <!-- Bank Transfer -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300 selected:border-indigo-400">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-600/20 p-2 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium">Bank Transfer</span>
+                            </div>
+                        </div>
+                        
+                        <!-- E-Wallet -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-600/20 p-2 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium">E-Wallet</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Virtual Account -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-600/20 p-2 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium">Virtual Account</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Retail -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-600/20 p-2 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium">Retail</span>
+                            </div>
+                        </div>
+                        
+                        <!-- QRIS -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-indigo-600/20 p-2 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                    </svg>
+                                </div>
+                                <span class="font-medium">QRIS</span>
+                            </div>
+                        </div>
+                        
+                        <!-- OVO -->
+                        <div class="payment-method bg-gray-800 rounded-lg p-4 border border-gray-700 cursor-pointer hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex items-center space-x-3">
+                                <img src="https://placehold.co/40x40" alt="Logo OVO dengan warna ungu dan putih" class="w-8 h-8">
+                                <span class="font-medium">OVO</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details Form -->
+                    <div>
+                        <h4 class="text-md font-semibold mb-4">Detail Pembayaran</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2">ID Game</label>
+                                <input type="text" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Contoh: 12345678">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2">Nickname</label>
+                                <input type="text" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nickname di game">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-400 mb-2">Server</label>
+                            <select class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Pilih Server</option>
+                                <option value="local">Local (Indonesia)</option>
+                                <option value="asia">Asia</option>
+                                <option value="europe">Eropa</option>
+                                <option value="america">Amerika</option>
+                            </select>
+                        </div>
+                        
+                        <button id="confirmPayment" class="btn-primary w-full py-3 rounded-lg font-medium pulse">Konfirmasi Pembayaran</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Section (Hidden by Default) -->
+    <section id="successSection" class="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center hidden">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <div class="w-32 h-32 bg-indigo-600/30 rounded-full flex items-center justify-center mb-8 mx-auto p-6 glowing">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Pembayaran Berhasil!</h2>
+                <p class="text-xl text-gray-300 mb-8">Terima kasih telah berbelanja di WpShop. Diamond Anda akan segera diproses.</p>
+                
+                <div class="bg-gray-900/50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Order ID:</span>
+                        <span class="font-medium">WP987654321</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Game:</span>
+                        <span class="font-medium" id="successGame">Mobile Legends</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Item:</span>
+                        <span class="font-medium" id="successDiamond">172 Diamond</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-400">Harga:</span>
+                        <span class="font-medium" id="successPrice">Rp 44.000</span>
+                    </div>
+                    <div class="border-t border-gray-700 mt-4 pt-4">
+                        <div class="flex justify-between">
+                            <span class="font-semibold">Total:</span>
+                            <span class="font-bold text-indigo-400" id="successTotal">Rp 44.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <button class="btn-primary px-8 py-3 rounded-lg font-medium">Lacak Pesanan</button>
+                    <button id="backToHome" class="bg-transparent border border-indigo-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-indigo-500/20 transition duration-300">Kembali ke Beranda</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-8 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">W</div>
+                    <span class="text-lg font-bold">WpShop</span>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">FAQ</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">Contact</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+                © 2023 WpShop. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Login/Register Modal
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
         
-        .diamond-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+            loginForm.classList.add('active-form');
+            registerForm.classList.remove('active-form');
+        });
+        
+        registerBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+            registerForm.classList.add('active-form');
+            loginForm.classList.remove('active-form');
+        });
+        
+        closeModal.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+        
+        switchToRegister.addEventListener('click', () => {
+            loginForm.classList.remove('active-form');
+            registerForm.classList.add('active-form');
+        });
+        
+        switchToLogin.addEventListener('click', () => {
+            registerForm.classList.remove('active-form');
+            loginForm.classList.add('active-form');
+        });
+        
+        // Game Navigation
+        const gamesSection = document.getElementById('games');
+        const diamondSection = document.getElementById('diamondSection');
+        const paymentSection = document.getElementById('paymentSection');
+        const successSection = document.getElementById('successSection');
+        
+        const selectGameBtns = document.querySelectorAll('.selectGame');
+        const backToGamesBtn = document.getElementById('backToGames');
+        const backToDiamondBtn = document.getElementById('backToDiamond');
+        const backToHomeBtn = document.getElementById('backToHome');
+        
+        selectGameBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const gameName = btn.getAttribute('data-game');
+                document.getElementById('selectedGameTitle').textContent = gameName;
+                document.getElementById('paymentGameTitle').textContent = gameName;
+                document.getElementById('successGame').textContent = gameName;
+                
+                gamesSection.classList.add('hidden');
+                diamondSection.classList.remove('hidden');
+            });
+        });
+        
+        backToGamesBtn.addEventListener('click', () => {
+            diamondSection.classList.add('hidden');
+            gamesSection.classList.remove('hidden');
+        });
+        
+        // Diamond Selection
+        const selectDiamondBtns = document.querySelectorAll('.selectDiamond');
+        
+        selectDiamondBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const diamondAmount = btn.getAttribute('data-diamond');
+                const diamondPrice = btn.getAttribute('data-price');
+                
+                document.getElementById('paymentDiamondAmount').textContent = diamondAmount + ' Diamond';
+                document.getElementById('paymentDiamondPrice').textContent = 'Rp ' + parseInt(diamondPrice).toLocaleString('id-ID');
+                document.getElementById('paymentTotalPrice').textContent = 'Rp ' + parseInt(diamondPrice).toLocaleString('id-ID');
+                
+                document.getElementById('successDiamond').textContent = diamondAmount + ' Diamond';
+                document.getElementById('successPrice').textContent = 'Rp ' + parseInt(diamondPrice).toLocaleString('id-ID');
+                document.getElementById('successTotal').textContent = 'Rp ' + parseInt(diamondPrice).toLocaleString('id-ID');
+                
+                diamondSection.classList.add('hidden');
+                paymentSection.classList.remove('hidden');
+            });
+        });
+        
+        backToDiamondBtn.addEventListener('click', () => {
+            paymentSection.classList.add('hidden');
+            diamondSection.classList.remove('hidden');
+        });
+        
+        // Payment Method Selection
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                // Remove selected class from all methods
+                paymentMethods.forEach(m => {
+                    m.classList.remove('border-indigo-400', 'bg-indigo-600/10');
+                });
+                
+                // Add selected class to clicked method
+                method.classList.add('border-indigo-400', 'bg-indigo-600/10');
+            });
+        });
+        
+        // Confirm Payment
+        const confirmPaymentBtn = document.getElementById('confirmPayment');
+        
+        confirmPaymentBtn.addEventListener('click', () => {
+            paymentSection.classList.add('hidden');
+            successSection.classList.remove('hidden');
+            
+            // Scroll to top of success section
+            setTimeout(() => {
+                successSection.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+        
+        // Back to Home
+        backToHomeBtn.addEventListener('click', () => {
+            successSection.classList.add('hidden');
+            gamesSection.classList.remove('hidden');
+            
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
